@@ -1,4 +1,4 @@
-# AI Career Intelligence Platform
+# Pathway-career-intelligence : AI Career Assistant Platform
 
 > A full-stack, production-ready platform to manage resumes, analyze job descriptions, identify skill gaps, prepare for interviews, and generate ATS-optimized PDFs.
 
@@ -6,7 +6,7 @@
 
 ## Table of Contents
 
-- [AI Career Intelligence Platform](#ai-career-intelligence-platform)
+- [Pathway-career-intelligence : AI Career Assistant Platform](#pathway-career-intelligence--ai-career-assistant-platform)
   - [Table of Contents](#table-of-contents)
   - [Project Vision \& Philosophy](#project-vision--philosophy)
   - [System Architecture](#system-architecture)
