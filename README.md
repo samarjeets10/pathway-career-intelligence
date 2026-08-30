@@ -72,7 +72,7 @@ Route → Middleware (Auth/Validate) → Controller → Service → Model/Extern
 ### Folder Structure:
 
 ```text
-├── backend/
+├── server/
 │   ├── src/
 │   │   ├── config/           # Environment, DB, AI, logging config
 │   │   ├── models/           # Mongoose schemas
@@ -89,8 +89,9 @@ Route → Middleware (Auth/Validate) → Controller → Service → Model/Extern
 │   ├── package.json
 │   └── server.js             # Entry point
 │
-├── frontend/
+├── client/
 │   ├── src/
+|   |   |--features/          # Feature-based modules (Resume, Job, Interview)
 │   │   ├── components/       # Reusable UI components
 │   │   ├── pages/            # Page-level components
 │   │   ├── hooks/            # Custom React hooks
