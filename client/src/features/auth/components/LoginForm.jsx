@@ -1,9 +1,24 @@
-import React from 'react'
+import { useState } from 'react';
+import { useAuth } from '../hooks/useAuth'
+import { useNavigate } from 'react-router'; 
 
 function LoginForm() {
 
-    const handleSubmit = (e) => {
+    const { loading, handleLogin } = useAuth();
+    const navigate = useNavigate();
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        await handleLogin({ email, password });
+
+        navigate("/");
+    }
+
+    if (loading) {
+        return (<main>Laoding...</main>);
     }
 
   return (
@@ -12,6 +27,9 @@ function LoginForm() {
         <div className='flex flex-col gap-2'>
             <label htmlFor="email" className='text-md'>Email</label>
             <input 
+            onChange={(e) => {
+                setEmail(e.target.value);
+            }}
             id='email'
             name='email'
             type="email" 
@@ -20,6 +38,9 @@ function LoginForm() {
         <div className='flex flex-col gap-2'>
             <label htmlFor="password" className='text-md'>Password</label>
             <input 
+            onChange={(e) => {
+                setPassword(e.target.value)
+            }}
             id='password'
             name='password'
             type="password" 
