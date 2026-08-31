@@ -1,9 +1,25 @@
-import React from 'react'
+import { useState } from 'react'; 
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router';
 
 function RegisterForm() {
 
-    const handleSubmit = (e) => {
+    const { loading, handleRegister } = useAuth();
+    const navigate = useNavigate();
+
+    const [username, setUserName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const handleSubmit = async (e) => {
     e.preventDefault();
+    await handleRegister({username, email, password});
+
+        navigate("/");
+  }
+
+  if (loading) {
+    return (<main>Loading...</main>)
   }
 
   return (
@@ -12,6 +28,9 @@ function RegisterForm() {
         <div className='flex flex-col gap-2'>
             <label htmlFor="username" className='text-md'>User Name</label>
             <input 
+            onChange={(e) => {
+                setUserName(e.target.value);
+            }}
             id='username'
             name='username'
             type="text" 
@@ -20,6 +39,9 @@ function RegisterForm() {
         <div className='flex flex-col gap-2'>
             <label htmlFor="email" className='text-md'>Email</label>
             <input 
+            onChange={(e) => {
+                setEmail(e.target.value);
+            }}
             id='email'
             name='email'
             type="email" 
@@ -28,6 +50,9 @@ function RegisterForm() {
         <div className='flex flex-col gap-2'>
             <label htmlFor="password" className='text-md'>Password</label>
             <input 
+            onChange={(e) => {
+                setPassword(e.target.value);
+            }}
             id='password'
             name='password'
             type="password" 

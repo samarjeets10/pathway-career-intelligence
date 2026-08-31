@@ -19,8 +19,13 @@ export const router = createBrowserRouter([
         element: <Register />
     }, 
 
+    // {
+    //     path: "/",
+    //     element: <h1>Pathway Dashboard</h1>
+    // }, 
+
     {
         path: "/",
-        element: <h1>Pathway Landing Page</h1>
+        element: <h1>Registered User Dashboard</h1>
     }
 ]);
