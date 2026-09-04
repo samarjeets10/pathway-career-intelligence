@@ -1,19 +1,61 @@
 const { GoogleGenAI } = require("@google/genai");
+const interviewReportSchema = require("../schemas/interview-report.schema");
+const { z } = require('zod');
 
 const ai = new GoogleGenAI({
     apiKey: process.env.GOOGLE_GENAI_API_KEY
 });
 
 
-async function invokeGeminiAI() {
+async function generateInterviewReport({resume, selfDescription, jobDescription}) {
+
+    const prompt = `You are an expert technical interviewer and career analyst.
+
+    Analyze the candidate's profile against the target job description and generate
+    a structured interview preparation report.
+
+    CANDIDATE RESUME:
+    ${resume}
+
+    CANDIDATE SELF DESCRIPTION:
+    ${selfDescription}
+
+    JOB DESCRIPTION:
+    ${jobDescription}
+
+    Evaluate the candidate strictly based on the information provided.
+    Do not invent skills, experience, projects, or achievements.
+
+    Generate:
+    - An overall match score
+    - Technical interview questions
+    - Behavioral interview questions
+    - Skill gaps
+    - A practical preparation plan`;
 
     const response = await ai.models.generateContent({
         model: "gemini-3.6-flash",
-        contents: "Hello gemini ! Explain what is Interview"
+        contents: prompt,
+        config: {
+            // responseFormat: {
+            //     text: {
+            //         type: text,
+            //         mimeType: "application/json",
+            //         schema: z.toJSONSchema(interviewReportSchema)
+            //     }
+            // }
+
+            responseMimeType: "application/json",
+            responseJsonSchema: z.toJSONSchema(interviewReportSchema)
+        }
     });
 
-    console.log(response.text);
+    const report = interviewReportSchema.parse(JSON.parse(response.output_text));
+
+    console.log(report);
+
+
 }
 
 
-module.exports = invokeGeminiAI;
+module.exports = generateInterviewReport;
