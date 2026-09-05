@@ -6,11 +6,6 @@ import PageNotFound from './features/auth/pages/PageNotFound';
 
 
 export const router = createBrowserRouter([
-    // {
-    //     path: "/",
-    //     element: <Login />,
-    // },
-
     {
         path: "/login",
         element: <Login />,
@@ -20,11 +15,6 @@ export const router = createBrowserRouter([
         path: "/register",
         element: <Register />
     }, 
-
-    // {
-    //     path: "/",
-    //     element: <h1>Pathway Dashboard</h1>
-    // }, 
 
     {
         path: "/", 
@@ -37,7 +27,7 @@ export const router = createBrowserRouter([
     },
 
     {
-        path: "/",
-        element: <h1>Registered User Dashboard</h1>
+        path: "*",
+        element: <PageNotFound />
     }
 ]);

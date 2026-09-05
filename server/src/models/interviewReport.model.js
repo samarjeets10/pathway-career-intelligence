@@ -140,16 +140,16 @@ const interviewReportSchema = new mongoose.Schema({
 
     skillGaps: [ skillGapSchema ],
 
-    preparationPan: [ preparationPlanSchema ],
+    preparationPlan: [ preparationPlanSchema ],
 }, {
-    timeStamp: true,
+    timestamps: true,
 });
 
 
 const interviewReportModel = new mongoose.model("InterviewReport", interviewReportSchema);
 
 
-module.exports = interviewreportModel;
+module.exports = interviewReportModel;
 
 
 

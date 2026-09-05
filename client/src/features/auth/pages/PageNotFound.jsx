@@ -1,5 +1,5 @@
 import NotFoundIcon from '../../../assets/notfoundicon.svg?react'
-import { Link } from 'react-router'
+import { Link } from 'react-router-dom'
 
 function PageNotFound() {
   return (

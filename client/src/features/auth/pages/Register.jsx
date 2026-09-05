@@ -1,5 +1,5 @@
 import RegisterForm from '../components/RegisterForm'
-import { useNavigate, Link } from 'react-router'
+import { useNavigate, Link } from 'react-router-dom'
 
 function Register() {
   return (

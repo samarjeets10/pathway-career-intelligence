@@ -37,22 +37,16 @@ async function generateInterviewReport({resume, selfDescription, jobDescription}
         model: "gemini-3.6-flash",
         contents: prompt,
         config: {
-            // responseFormat: {
-            //     text: {
-            //         type: text,
-            //         mimeType: "application/json",
-            //         schema: z.toJSONSchema(interviewReportSchema)
-            //     }
-            // }
-
             responseMimeType: "application/json",
-            responseJsonSchema: z.toJSONSchema(interviewReportSchema)
+            responseSchema: z.toJSONSchema(interviewReportSchema)
         }
     });
 
-    const report = interviewReportSchema.parse(JSON.parse(response.output_text));
+    const report = interviewReportSchema.parse(JSON.parse(response.text));
 
     console.log(report);
+
+    return report;
 
 
 }
