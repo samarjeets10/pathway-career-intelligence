@@ -16,5 +16,4 @@ app.use(cors({
 app.use("/api/auth", authRouter);
 
 
-
 module.exports = app;

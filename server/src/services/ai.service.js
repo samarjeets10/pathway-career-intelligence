@@ -33,13 +33,21 @@ async function generateInterviewReport({resume, selfDescription, jobDescription}
     - Skill gaps
     - A practical preparation plan`;
 
+    console.log("========== AI SERVICE START ==========");
+
+    console.log("About to call Gemini...");
+
     const response = await ai.models.generateContent({
         model: "gemini-3.6-flash",
+        contents: prompt,
         config: {
             responseMimeType: "application/json",
             responseJsonSchema: z.toJSONSchema(interviewReportSchema)
         }
     });
+
+    console.log("Gemini response received");
+    console.log(response.text);
 
     const report = interviewReportSchema.parse(JSON.parse(response.text));
 
