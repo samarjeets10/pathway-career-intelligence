@@ -7,6 +7,20 @@ const ai = new GoogleGenAI({
 });
 
 
+function stripConstraints(schema) {
+    if (Array.isArray(schema)) return schema.map(stripConstraints);
+    if (schema && typeof schema === "object") {
+        const clone = {};
+        for (const [key, value] of Object.entries(schema)) {
+            if (["minLength", "maxLength", "minimum", "maximum", "minItems", "maxItems"].includes(key)) continue;
+            clone[key] = stripConstraints(value);
+        }
+        return clone;
+    }
+    return schema;
+}
+
+
 async function generateInterviewReport({resume, selfDescription, jobDescription}) {
 
     const prompt = `You are an expert technical interviewer and career analyst.
@@ -37,12 +51,12 @@ async function generateInterviewReport({resume, selfDescription, jobDescription}
 
     console.log("About to call Gemini...");
 
-    const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
+    const response = await callGeminiWithRetry({
+        model: "gemini-3.7-flash",
         contents: prompt,
         config: {
             responseMimeType: "application/json",
-            responseJsonSchema: z.toJSONSchema(interviewReportSchema)
+            responseSchema: stripConstraints(z.toJSONSchema(interviewReportSchema))
         }
     });
 
@@ -55,6 +69,20 @@ async function generateInterviewReport({resume, selfDescription, jobDescription}
 
     return report;
 
+}
+
+async function callGeminiWithRetry(request, retries = 3) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            return await ai.models.generateContent(request);
+        } catch (err) {
+            const isOverloaded = err?.status === 503;
+            if (!isOverloaded || attempt === retries) throw err;
+            const delay = attempt * 2000; // 2s, 4s, 6s
+            console.log(`Gemini overloaded, retrying in ${delay}ms...`);
+            await new Promise(res => setTimeout(res, delay));
+        }
+    }
 }
 
 
