@@ -1,11 +1,41 @@
-const { GoogleGenAI } = require("@google/genai");
+// const { GoogleGenAI } = require("@google/genai");
+const Groq = require("groq-sdk");
 const interviewReportSchema = require("../schemas/interview-report.schema");
 const { z } = require('zod');
 
-const ai = new GoogleGenAI({
-    apiKey: process.env.GOOGLE_GENAI_API_KEY
+const apiKey = process.env.GROQ_API_KEY;
+
+if (!apiKey) {
+    console.error("api key not loaded or found!!");
+}
+
+const groq = new Groq({
+    apiKey: process.env.apiKey
 });
 
+async function callLLmWithRetry({ prompt, schema }) {
+    const completion = await groq.chat.completions.create({
+        messages: [
+            {
+                role: "system",
+                content: `You are an expert technical interviewer and career analyst. 
+                You MUST output strictly valid JSON following this schema structure:
+                ${JSON.stringify(schema)}`
+            },
+            {
+                role: "user",
+                content: prompt
+            }
+        ],
+        model: "llama-3.1-8b-instant", 
+        response_format: { type: "json_object" },
+        temperature: 0.2
+    });
+
+    return {
+        text: completion.choices[0]?.message?.content
+    };
+}
 
 function stripConstraints(schema) {
     if (Array.isArray(schema)) return schema.map(stripConstraints);
@@ -49,19 +79,28 @@ async function generateInterviewReport({resume, selfDescription, jobDescription}
 
     console.log("========== AI SERVICE START ==========");
 
-    console.log("About to call Gemini...");
+    console.log("About to call Groq LLM...");
 
-    const response = await callGeminiWithRetry({
-        model: "gemini-3.7-flash",
-        contents: prompt,
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: stripConstraints(z.toJSONSchema(interviewReportSchema))
-        }
+
+    const cleanSchema = stripConstraints(z.toJSONSchema(interviewReportSchema));
+
+    // Calling the model with your retry wrapper intact
+    const response = await callLLmWithRetry({
+        prompt: prompt,
+        schema: cleanSchema
     });
 
-    console.log("Gemini response received");
+    console.log("LLM response received");
     console.log(response.text);
+
+    // const response = await callGeminiWithRetry({
+    //     model: "gemini-3.7-flash",
+    //     contents: prompt,
+    //     config: {
+    //         responseMimeType: "application/json",
+    //         responseSchema: stripConstraints(z.toJSONSchema(interviewReportSchema))
+    //     }
+    // });
 
     const report = interviewReportSchema.parse(JSON.parse(response.text));
 
@@ -69,20 +108,6 @@ async function generateInterviewReport({resume, selfDescription, jobDescription}
 
     return report;
 
-}
-
-async function callGeminiWithRetry(request, retries = 3) {
-    for (let attempt = 1; attempt <= retries; attempt++) {
-        try {
-            return await ai.models.generateContent(request);
-        } catch (err) {
-            const isOverloaded = err?.status === 503;
-            if (!isOverloaded || attempt === retries) throw err;
-            const delay = attempt * 2000; // 2s, 4s, 6s
-            console.log(`Gemini overloaded, retrying in ${delay}ms...`);
-            await new Promise(res => setTimeout(res, delay));
-        }
-    }
 }
 
 
