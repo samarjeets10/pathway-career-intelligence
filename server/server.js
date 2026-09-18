@@ -1,15 +1,21 @@
 require('dotenv').config();
-const generateInterviewReport = require('./src/services/ai.service')
-const { resume, selfDescription, jobDescription} = require("./src/services/temp");
 
 const app = require('./src/app');
 const connectDB = require('./src/config/database');
-// const { resume, selfDescription, jobDescription } = require("./src/services/temp");
-// const generateInterviewReport = require("./src/services/ai.service");
 
 connectDB();
-generateInterviewReport({ resume, selfDescription, jobDescription });
 
-app.listen(3000, () => {
+const server = app.listen(3000, () => {
     console.log("server is running on port 3000");
+});
+
+server.on('error', (err) => {
+    console.error(err.code === 'EADDRINUSE' ? 'Port 3000 already in use.' : err);
+    process.exitCode = 1;
+});
+
+process.on('unhandledRejection', (reason) => console.error('Unhandled Rejection:', reason));
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+    process.exitCode = 1;
 });

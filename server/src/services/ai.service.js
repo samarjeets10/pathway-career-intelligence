@@ -10,31 +10,29 @@ if (!apiKey) {
 }
 
 const groq = new Groq({
-    apiKey: process.env.apiKey
+    apiKey: apiKey
 });
 
 async function callLLmWithRetry({ prompt, schema }) {
     const completion = await groq.chat.completions.create({
         messages: [
-            {
-                role: "system",
-                content: `You are an expert technical interviewer and career analyst. 
-                You MUST output strictly valid JSON following this schema structure:
-                ${JSON.stringify(schema)}`
-            },
-            {
-                role: "user",
-                content: prompt
-            }
+            { role: "system", content: "You are an expert technical interviewer and career analyst." },
+            { role: "user", content: prompt }
         ],
-        model: "llama-3.1-8b-instant", 
-        response_format: { type: "json_object" },
-        temperature: 0.2
+        model: "openai/gpt-oss-20b",
+        response_format: {
+            type: "json_schema",
+            json_schema: {
+                name: "interview_report",
+                strict: true,
+                schema
+            }
+        },
+        temperature: 0.2,
+        max_completion_tokens: 4096
     });
 
-    return {
-        text: completion.choices[0]?.message?.content
-    };
+    return { text: completion.choices[0]?.message?.content };
 }
 
 function stripConstraints(schema) {
@@ -83,8 +81,6 @@ async function generateInterviewReport({resume, selfDescription, jobDescription}
 
 
     const cleanSchema = stripConstraints(z.toJSONSchema(interviewReportSchema));
-
-    // Calling the model with your retry wrapper intact
     const response = await callLLmWithRetry({
         prompt: prompt,
         schema: cleanSchema
@@ -92,15 +88,6 @@ async function generateInterviewReport({resume, selfDescription, jobDescription}
 
     console.log("LLM response received");
     console.log(response.text);
-
-    // const response = await callGeminiWithRetry({
-    //     model: "gemini-3.7-flash",
-    //     contents: prompt,
-    //     config: {
-    //         responseMimeType: "application/json",
-    //         responseSchema: stripConstraints(z.toJSONSchema(interviewReportSchema))
-    //     }
-    // });
 
     const report = interviewReportSchema.parse(JSON.parse(response.text));
 
