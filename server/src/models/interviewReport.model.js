@@ -41,9 +41,9 @@ const technicalQuestionSchema = new mongoose.Schema({
         required: [true, "Technical question is required"]
     },
 
-    intension: {
+    intention: {
         type: String,
-        required: [true, "Intension is required"]
+        required: [true, "Intention is required"]
     },
 
     answer: {
@@ -62,9 +62,9 @@ const behavioralQuestionSchema = new mongoose.Schema({
         required: [true, "Behavioral question is required"]
     },
 
-    intension: {
+    intention: {
         type: String,
-        required: [true, "Intension is required"]
+        required: [true, "Intention is required"]
     },
 
     answer: {

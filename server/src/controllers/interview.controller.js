@@ -5,6 +5,7 @@ const interviewReportModel = require("../models/interviewReport.model");
 async function generateInterviewReportController(req, res) {
 
     const resumeContent = await (new pdfParse.PDFParse(Uint8Array.from(req.file.buffer))).getText();
+    // const resumeContent = await pdfParse(req.file.buffer);
     const { selfDescription, jobDescription } = req.body;
 
     const interviewReportByAI = await generateInterviewReport({
@@ -16,7 +17,7 @@ async function generateInterviewReportController(req, res) {
 
     const interviewReport = await interviewReportModel.create({
         user: req.user.id,
-        resume: resumeContent,
+        resume: resumeContent.text,
         selfDescription,
         jobDescription,
         ...interviewReportByAI
