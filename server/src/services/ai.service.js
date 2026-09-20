@@ -17,9 +17,17 @@ const groq = new Groq({
 async function callLLmWithRetry({ prompt, schema }) {
     const completion = await groq.chat.completions.create({
         messages: [
-            { role: "system", content: "You are an expert technical interviewer and career analyst." },
-            { role: "user", content: prompt }
+            { 
+                role: "system", 
+                content: "You are an expert technical interviewer and career analyst." 
+            },
+
+            { 
+                role: "user", 
+                content: prompt 
+            }
         ],
+
         model: "openai/gpt-oss-20b",
         response_format: {
             type: "json_schema",
@@ -29,6 +37,7 @@ async function callLLmWithRetry({ prompt, schema }) {
                 schema
             }
         },
+        
         temperature: 0.2,
         max_completion_tokens: 4096
     });
