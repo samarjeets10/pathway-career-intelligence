@@ -1,4 +1,4 @@
-const { ALIAS_TO_CANONICAL } = require("../data/skillAliases");
+const { ALIAS_TO_CANONICAL, SKILL_IMPLICATIONS } = require("../data/skillAliases");
 
 
 // normalizing skills logic block :
@@ -19,9 +19,26 @@ function normalizeSkill(rawSkill) {
 };
 
 function normalizeSkillList(skills = []) {
-    return [
-        ...new Set(skills.map(normalizeSkill).filter(Boolean))
-    ];
+
+    const canonicalList = skills.map(normalizeSkill).filter(Boolean);
+    const expandedSet = new Set(canonicalList);
+
+    for(const skill of canonicalList) {
+        const implied = SKILL_IMPLICATIONS[skill];
+
+        if (Array.isArray(implied)) {
+            for(const impliedSkill of implied) {
+                expandedSet.add(impliedSkill);
+            }
+        }
+    }
+
+
+    return [...expandedSet];
+
+    // return [
+    //     ...new Set(skills.map(normalizeSkill).filter(Boolean))
+    // ];
 };
 
 
