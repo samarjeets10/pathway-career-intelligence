@@ -67,6 +67,10 @@ function careerExtractionPrompt({
         ${jobDescription}
 
         Extract the information into the exact JSON structure above.
+
+        Keep the extracted values concise.
+        Do not copy large portions of the source text.
+        Summarize descriptions instead of reproducing them verbatim.
     `;
 
 }

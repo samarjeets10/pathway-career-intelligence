@@ -26,25 +26,42 @@ async function extractCareerInformation({
         jobDescription
     });
 
+    console.log("\n========== EXTRACTION INPUT ==========");
+    console.log("Resume length:", resume?.length);
+    console.log("Self description length:", selfDescription?.length);
+    console.log("Job description length:", jobDescription?.length);
+    console.log("======================================\n");
 
-    const completion = await groq.chat.completions.create({
-        model: "openai/gpt-oss-20b",
-        messages: [
-            {
-                role: "system",
-                content: "You extract structured career information from provided text. Return the result as valid JSON."
+    let completion;
+
+    try {
+
+        completion = await groq.chat.completions.create({
+            model: "openai/gpt-oss-20b",
+            reasoning_effort: "low",
+            max_completion_tokens: 4096,
+            messages: [
+                {
+                    role: "system",
+                    content: "You extract structured career information from provided text. Return the result as valid JSON."
+                },
+
+                {
+                    role: "user",
+                    content: prompt
+                },
+            ],
+
+            response_format: {
+                    type: "json_object"
             },
+        });
 
-            {
-                role: "user",
-                content: prompt
-            },
-        ],
-
-        response_format: {
-                type: "json_object"
-        },
-    });
+    } catch (error) {
+        console.error("\n========== GROQ ERROR ==========");
+        console.error(error);
+        console.error("================================\n");
+    }
 
     const rawContent =  completion.choices[0].message.content;
 
