@@ -32,7 +32,7 @@ async function extractCareerInformation({
         messages: [
             {
                 role: "system",
-                content: "You extract structured career information from provided text."
+                content: "You extract structured career information from provided text. Return the result as valid JSON."
             },
 
             {

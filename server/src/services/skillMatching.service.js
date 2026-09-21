@@ -20,25 +20,23 @@ function normalizeSkill(rawSkill) {
 
 function normalizeSkillList(skills = []) {
 
-    const canonicalList = skills.map(normalizeSkill).filter(Boolean);
-    const expandedSet = new Set(canonicalList);
+//     const canonicalList = skills.map(normalizeSkill).filter(Boolean);
+//     const expandedSet = new Set(canonicalList);
+// 
+//     for(const skill of canonicalList) {
+//         const implied = SKILL_IMPLICATIONS[skill];
+// 
+//         if (Array.isArray(implied)) {
+//             for(const impliedSkill of implied) {
+//                 expandedSet.add(impliedSkill);
+//             }
+//         }
+//     }
+//     return [...expandedSet];
 
-    for(const skill of canonicalList) {
-        const implied = SKILL_IMPLICATIONS[skill];
-
-        if (Array.isArray(implied)) {
-            for(const impliedSkill of implied) {
-                expandedSet.add(impliedSkill);
-            }
-        }
-    }
-
-
-    return [...expandedSet];
-
-    // return [
-    //     ...new Set(skills.map(normalizeSkill).filter(Boolean))
-    // ];
+    return [
+        ...new Set(skills.map(normalizeSkill).filter(Boolean))
+    ];
 };
 
 
