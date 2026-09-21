@@ -4,7 +4,9 @@ const interviewReportSchema = require("../schemas/interview-report.schema");
 const interviewReportPrompt = require("../prompts/interviewReport.prompt");
 const { z } = require('zod');
 
+
 const apiKey = process.env.GROQ_API_KEY;
+
 
 if (!apiKey) {
     console.error("api key not loaded or found!!");
@@ -86,7 +88,7 @@ async function generateInterviewReport({resume, selfDescription, jobDescription}
     console.log(report);
 
     return report;
-
+    
 }
 
 
