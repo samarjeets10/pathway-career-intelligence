@@ -1,7 +1,7 @@
 // const { GoogleGenAI } = require("@google/genai");
 const Groq = require("groq-sdk");
 const interviewReportSchema = require("../schemas/interview-report.schema");
-const interviewReportPrompt = require("../prompts/interviewReport.prompt");
+const { interviewReportPrompt } = require("../prompts/interviewReport.prompt");
 const { z } = require('zod');
 
 
@@ -15,6 +15,21 @@ if (!apiKey) {
 const groq = new Groq({
     apiKey: apiKey
 });
+
+
+function stripConstraints(schema) {
+    if (Array.isArray(schema)) return schema.map(stripConstraints);
+    if (schema && typeof schema === "object") {
+        const clone = {};
+        for (const [key, value] of Object.entries(schema)) {
+            if (["minLength", "maxLength", "minimum", "maximum", "minItems", "maxItems"].includes(key)) continue;
+            clone[key] = stripConstraints(value);
+        }
+        return clone;
+    }
+    return schema;
+};
+
 
 async function callLLmWithRetry({ prompt, schema }) {
     const completion = await groq.chat.completions.create({
@@ -41,55 +56,74 @@ async function callLLmWithRetry({ prompt, schema }) {
         },
         
         temperature: 0.2,
-        max_completion_tokens: 4096
+        max_completion_tokens: 8192
     });
 
-    return { text: completion.choices[0]?.message?.content };
+    // return { text: completion.choices[0]?.message?.content };
+    return completion.choices[0]?.message?.content;
 }
 
-function stripConstraints(schema) {
-    if (Array.isArray(schema)) return schema.map(stripConstraints);
-    if (schema && typeof schema === "object") {
-        const clone = {};
-        for (const [key, value] of Object.entries(schema)) {
-            if (["minLength", "maxLength", "minimum", "maximum", "minItems", "maxItems"].includes(key)) continue;
-            clone[key] = stripConstraints(value);
-        }
-        return clone;
-    }
-    return schema;
-};
 
-
-async function generateInterviewReport({resume, selfDescription, jobDescription}) {
+async function generateInterviewReport({
+    candidate, job, skillAnalysis
+}) {
 
     const prompt = interviewReportPrompt({
-        resume: resume || "Not provided", 
-        selfDescription: selfDescription || "Not provided", 
-        jobDescription
+        candidate,
+        job,
+        skillAnalysis
     });
-
-    console.log("========== AI SERVICE START ==========");
-
-    console.log("About to call Groq LLM...");
-
 
     const cleanSchema = stripConstraints(z.toJSONSchema(interviewReportSchema));
-    const response = await callLLmWithRetry({
-        prompt: prompt,
-        schema: cleanSchema
-    });
 
-    console.log("LLM response received");
-    console.log(response.text);
 
-    const report = interviewReportSchema.parse(JSON.parse(response.text));
+    let responseText;
 
-    console.log(report);
+    try {
+        responseText = await callLLmWithRetry({
+            prompt,
+            schema: cleanSchema
+        });
+    } catch (error) {
+        console.error("\n========== GROQ REPORT ERROR ==========");
+        console.error(error);
+        console.error("========================================\n");
 
-    return report;
-    
+        throw error;
+    }
+
+
+    if (!responseText) {
+        throw new Error("AI  returned an empty interview report.");
+    }
+
+    let parseReport;
+
+    try {
+
+        parseReport = JSON.parse(responseText);
+
+    } catch (error) {
+        throw new Error("AI returned invalid JSON during interview report generation.");
+    }
+
+    const validationResult = interviewReportSchema.safeParse(parseReport);
+
+    if (!validationResult.success) {
+        console.error("\n========== REPORT SCHEMA ERROR ==========");
+
+         console.error(validationResult.error);
+
+        console.error("=========================================\n");
+
+        throw new Error("AI interview report did not match the expected structure.");
+    }
+
+    return validationResult.data;
+
 }
 
 
-module.exports = generateInterviewReport;
+module.exports = {
+    generateInterviewReport
+}

@@ -113,23 +113,6 @@ function interviewReportPrompt({
         TECHNICAL QUESTIONS
         ==================================================
 
-        Generate realistic technical interview questions tailored to
-        this candidate and this job.
-
-        Prioritize questions involving:
-
-        - required technologies
-        - demonstrated candidate skills
-        - candidate projects
-        - practical implementation
-        - debugging
-        - fundamentals
-        - architecture and reasoning where appropriate
-        - the deterministic skill gaps
-
-        Avoid generic questions when a more relevant candidate-specific
-        question can be generated.
-
         For every technical question provide:
 
         - question
@@ -139,6 +122,41 @@ function interviewReportPrompt({
         - answer
         - expectedAnswerPoints
         - relatedSkills
+
+        IMPORTANT CONSTRAINTS FOR expectedAnswerPoints:
+
+        - expectedAnswerPoints must contain between 2 and 8 items.
+        - NEVER provide more than 8 expectedAnswerPoints.
+        - Keep each expectedAnswerPoint concise and focused on one important
+        concept that a strong candidate should mention.
+        - If there are more than 8 possible points, select only the 8 most
+        relevant points.
+
+        IMPORTANT CONSTRAINTS FOR relatedSkills:
+
+        - relatedSkills must contain between 1 and 6 items.
+        - NEVER provide more than 6 relatedSkills.
+        - Only include skills directly relevant to the question.
+
+        The "category" field MUST use exactly one of these values:
+
+        - fundamentals
+        - programming
+        - frontend
+        - backend
+        - database
+        - api
+        - system-design
+        - ai-ml
+        - devops
+        - security
+        - project-based
+
+        Do not use any other category value.
+
+        For debugging questions, classify them under the
+        most relevant technical area such as frontend, backend,
+        database, api, or fundamentals.
 
         The answer should be an interview answer strategy, not a fabricated
         personal experience.
@@ -159,6 +177,10 @@ function interviewReportPrompt({
         - achievements
         - target role
 
+        Generate AT LEAST 3 behavioral questions.
+
+        Do not return an empty behavioralQuestions array.
+
         Do not invent situations that are not supported by the candidate
         information.
 
@@ -169,6 +191,12 @@ function interviewReportPrompt({
         - answer
         - expectedAnswerPoints
         - recommendedStructure
+
+        Behavioral expectedAnswerPoints constraints:
+
+        - expectedAnswerPoints must contain between 2 and 6 items.
+        - NEVER provide more than 6 items.
+        - Keep each point concise and focused.
 
         Use STAR where it is appropriate.
 
@@ -199,6 +227,17 @@ function interviewReportPrompt({
 
         The preparation plan must address the provided skill gaps and
         the actual requirements of the target job.
+
+        Every preparation-plan day MUST address at least one
+        identified skill gap.
+
+        The skillGapsAddressed array must never be empty.
+
+        Only use skills from the deterministic skill gap list.
+
+        If a day's main focus is not directly related to a skill gap,
+        connect that day's tasks to an identified gap through interview
+        preparation or practical application.
 
         ==================================================
 
