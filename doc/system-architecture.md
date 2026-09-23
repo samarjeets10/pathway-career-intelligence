@@ -123,6 +123,27 @@ Instead:
         └──────────────┼──────────────┘
                        │
               Shared Infrastructure
+
+
+              Resume PDF ────────┐
+                   │
+Job Description ───┼──► AI Extraction
+                   │
+Self Description ──┘
+                         │
+                         ▼
+                 Structured JSON
+                         │
+              ┌──────────┴──────────┐
+              ▼                     ▼
+       Candidate Profile       Job Requirements
+              │                     │
+              └──────────┬──────────┘
+                         ▼
+                Deterministic Engine
+                         │
+                         ▼
+              Match Score + Skill Gaps
 ```
 
 Everything is deployed as one backend initially, but internally the modules have clear boundaries.
