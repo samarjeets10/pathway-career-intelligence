@@ -31,36 +31,51 @@ function stripConstraints(schema) {
 };
 
 
-async function callLLmWithRetry({ prompt, schema }) {
-    const completion = await groq.chat.completions.create({
-        messages: [
-            { 
-                role: "system", 
-                content: "You are an expert technical interviewer and career analyst." 
-            },
+async function callLLmWithRetry({ prompt, schema, validate, retries = 2 }) {
 
-            { 
-                role: "user", 
-                content: prompt 
-            }
-        ],
-
-        model: "openai/gpt-oss-20b",
-        response_format: {
-            type: "json_schema",
-            json_schema: {
-                name: "interview_report",
-                strict: true,
-                schema
-            }
-        },
+    for (let attemp = 1; attemp <= retries; attempt++) {
         
-        temperature: 0.2,
-        max_completion_tokens: 8192
-    });
+        const completion = await groq.chat.completions.create({
+            messages: [
+                { 
+                    role: "system", 
+                    content: "You are an expert technical interviewer and career analyst." 
+                },
 
-    // return { text: completion.choices[0]?.message?.content };
-    return completion.choices[0]?.message?.content;
+                { 
+                    role: "user", 
+                    content: prompt 
+                }
+            ],
+
+            model: "openai/gpt-oss-20b",
+            response_format: {
+                type: "json_schema",
+                json_schema: {
+                    name: "interview_report",
+                    strict: true,
+                    schema
+                }
+            },
+            
+            temperature: 0.2,
+            max_completion_tokens: 8192
+        });
+
+        const responseText = completion.choices[0]?.message?.content;
+
+        const result = validate(responseText);
+
+        if (result.ok) {
+            return result.data;
+        }
+
+        console.warn(`[ai.service] attempt ${attempt}/${retries} failed: ${result.reason}`);
+
+        if (attempt === retries) {
+            throw new Error(result.reason);
+        }
+    }
 }
 
 
@@ -76,51 +91,68 @@ async function generateInterviewReport({
 
     const cleanSchema = stripConstraints(z.toJSONSchema(interviewReportSchema));
 
+    const validate = (responseText) => {
 
-    let responseText;
+        if (!responseText) {
+            return {
+                ok: false,
+                reason:
+                    "AI returned an empty interview report."
+            };
+        }
+
+        let parsed;
+
+        try {
+            parsed = JSON.parse(responseText);
+        } catch {
+            return {
+                ok: false,
+                reason:
+                    "AI returned invalid JSON during interview report generation."
+            };
+        }
+
+        const result =
+            interviewReportSchema.safeParse(parsed);
+
+        if (!result.success) {
+            return {
+                ok: false,
+                reason:
+                    `AI interview report did not match the expected structure: ${result.error.message}`
+            };
+        }
+
+        return {
+            ok: true,
+            data: result.data
+        };
+    };
 
     try {
-        responseText = await callLLmWithRetry({
+
+        return await callLLmWithRetry({
             prompt,
-            schema: cleanSchema
+            schema: cleanSchema,
+            validate,
+            retries: 2
         });
+
     } catch (error) {
-        console.error("\n========== GROQ REPORT ERROR ==========");
+
+        console.error(
+            "\n========== GROQ REPORT ERROR =========="
+        );
+
         console.error(error);
-        console.error("========================================\n");
+
+        console.error(
+            "========================================\n"
+        );
 
         throw error;
     }
-
-
-    if (!responseText) {
-        throw new Error("AI  returned an empty interview report.");
-    }
-
-    let parseReport;
-
-    try {
-
-        parseReport = JSON.parse(responseText);
-
-    } catch (error) {
-        throw new Error("AI returned invalid JSON during interview report generation.");
-    }
-
-    const validationResult = interviewReportSchema.safeParse(parseReport);
-
-    if (!validationResult.success) {
-        console.error("\n========== REPORT SCHEMA ERROR ==========");
-
-         console.error(validationResult.error);
-
-        console.error("=========================================\n");
-
-        throw new Error("AI interview report did not match the expected structure.");
-    }
-
-    return validationResult.data;
-
 }
 
 
