@@ -3,6 +3,7 @@ import Login from './features/auth/pages/Login';
 import Register from './features/auth/pages/Register';
 import Protected from './features/auth/components/Protected';
 import PageNotFound from './features/auth/pages/PageNotFound';
+import LandingPage from './pages/LandingPage';
 
 
 export const router = createBrowserRouter([
@@ -17,7 +18,12 @@ export const router = createBrowserRouter([
     }, 
 
     {
-        path: "/", 
+        path: "/",
+        element: <LandingPage />
+    },
+
+    {
+        path: "/home", 
         element: <Protected><h1>Home Page</h1></Protected>
     },
 
