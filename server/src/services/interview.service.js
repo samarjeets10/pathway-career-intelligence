@@ -1,11 +1,13 @@
 const { extractCareerInformation } = require("./careerExtraction.service");
-const {analyzeSkillGap } = require("./skillMatching.service");
+const { analyzeSkillGap } = require("./skillMatching.service");
+const { generateInterviewReport } = require("./ai.service")
 
 async function analyzeInterviewData({
     resume, 
     selfDescription,
     jobDescription
 }) {
+
 
     const careerInformation = await extractCareerInformation({
         resume, 
@@ -20,13 +22,27 @@ async function analyzeInterviewData({
         preferredSkills: careerInformation.job.preferredSkills
     });
 
-    return {
+
+    const aiReport = await generateInterviewReport({
+        candidate: careerInformation.candidate,
+        job: careerInformation.job,
+        skillAnalysis
+    });
+
+
+    const finalReport = {
+        ...aiReport,
+        
         matchScore: skillAnalysis.matchScore,
-        skillGaps: skillAnalysis.skillGaps.map((skill) => ({
-            skill, 
-            severity: "medium"
+        skillGaps: aiReport.skillGap.map((gap) => ({
+            ...gap
         }))
     };
+
+
+    delete finalReport.skillGap;
+
+    return finalReport;
 
 };
 

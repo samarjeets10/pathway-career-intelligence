@@ -9,13 +9,19 @@ const mongoose = require("mongoose");
  * 
  * - technical questions : [{
  *                              question : "",
+ *                              category: "",
+ *                              difficulty: "",
  *                              intension : "",
- *                              answer : ""
+ *                              answer : "",
+ *                              expectedAnswerPoints: "",
+ *                              relatedSkills: ""
  *                          }]
  * - behaviour questions : [{
  *                              question : "",
  *                              intension : "",
- *                              answer : ""
+ *                              answer : "",
+ *                              expectedAnswerPoints: "",
+ *                              recommendedStructure: ""
  *                          }]
  * - skill gap : [{
 *                   skill : "",
@@ -23,12 +29,20 @@ const mongoose = require("mongoose");
 *                                  type: String,
 *                                  enum: ["low", "medium", "high"]
 *                              },
-*                   answer : ""
+*                   answer : "",
+*                   reason: "",
+*                   recommendation: "",
+*                   priority: {     
+*                               type: Number,
+*                               required: true
+*                               }
 *               }]
  * - preparation plan : [{
  *                          day: Number,
  *                          focus: String,
- *                          tasks: [String]
+ *                          Objective: {type: String, required: true}
+ *                          tasks: [String],
+ *                          skillGapAddressed: {type: String, required: true}
  *                      }] array of objects
  * 
  */
@@ -41,6 +55,31 @@ const technicalQuestionSchema = new mongoose.Schema({
         required: [true, "Technical question is required"]
     },
 
+    category: {
+        type: String,
+        enum: [
+            "fundamentals",
+            "programming",
+            "frontend",
+            "backend",
+            "database",
+            "api",
+            "system-design",
+            "ai-ml",
+            "devops",
+            "security",
+            "project-based"
+        ],
+        required: [true, "Technical question category is required"]
+
+    },
+
+    difficulty: {
+        type: String,
+        enum: ["easy", "medium", "hard"],
+        required: [true, "Interview is required"]
+    },
+
     intention: {
         type: String,
         required: [true, "Intention is required"]
@@ -49,7 +88,19 @@ const technicalQuestionSchema = new mongoose.Schema({
     answer: {
         type: String,
         required: [true, "Answer is required"]
-    }
+    },
+
+    expectedAnswerPoints: [{
+        type: String,
+        required: true
+    }],
+
+    relatedSkills: [{
+        type: String,
+        required: true
+    }]
+
+
 }, {
     _id: false
 });
@@ -70,7 +121,24 @@ const behavioralQuestionSchema = new mongoose.Schema({
     answer: {
         type: String,
         required: [true, "Answer is required"]
+    },
+
+    expectedAnswerPoints: [{
+        type: String,
+        required: true
+    }],
+
+    recommendedStructure: {
+        type: String,
+        enum: [
+            "STAR",
+            "direct",
+            "situation-focused",
+            "experience-focused"
+        ],
+        required: [true, "Recommended structure is required"]
     }
+
 }, {
     _id: false
 });
@@ -87,7 +155,25 @@ const skillGapSchema = new mongoose.Schema({
         type: String,
         enum: ["low", "medium", "high"],
         required: [true, "Severity is required"]
+    },
+
+    reason: {
+        type: String,
+        required: [true, "Skill gap reson is required"]
+    },
+
+    recommendation: {
+        type: String,
+        required: [true, "Skill gap recommendation is required"]
+    },
+
+    priority: {
+        type: Number,
+        min: 1,
+        max: 15,
+        required: [true, "Skill gap priority is required"]
     }
+
 }, {
     _id: false
 });
@@ -105,11 +191,26 @@ const preparationPlanSchema = new mongoose.Schema({
         required: [true, "Focus is required"],
     },
 
+    objective: {
+        type: String,
+        required: [true, "Objective is required"]
+    },
+
     tasks: [{
         type: String,
         required: [true, "Task is required"]
+    }],
+
+    skillGapAddressed: [{
+        type: String,
+        required: true
     }]
-}, );
+
+}, {
+    _id: false
+}
+
+);
 
 
 
@@ -131,7 +232,8 @@ const interviewReportSchema = new mongoose.Schema({
     matchScore: {
         type: Number,
         min: 0,
-        max: 100
+        max: 100,
+        required: true
     },
 
     technicalQuestions: [ technicalQuestionSchema ],
@@ -140,7 +242,8 @@ const interviewReportSchema = new mongoose.Schema({
     preparationPlan: [ preparationPlanSchema ],
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "users"
+        ref: "users",
+        required: true
     }
 }, {
     timestamps: true,
