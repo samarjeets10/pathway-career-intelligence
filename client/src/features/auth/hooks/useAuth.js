@@ -1,11 +1,16 @@
 import { useContext } from "react";
-import { AuthContext } from "../auth.context";
+import { AuthContext } from "../../../app/providers/AuthProvider";
 import { login, register, logout, getMe } from '../services/auth.api'
 import { useEffect } from "react";
 
 export const useAuth = () => {
 
     const context = useContext(AuthContext);
+
+    if (!context) {
+        throw new Error("useAuth must be used within an AuthProvider");
+    }
+
     const { user, setUser, loading, setLoading } = context;
 
     const handleLogin = async ({ email, password }) => {
@@ -28,6 +33,7 @@ export const useAuth = () => {
             
             const data = await register({ username, email, password });
             setUser(data.user);
+            return data;
 
         } catch (error) {
             console.error(error.message);
@@ -44,6 +50,7 @@ export const useAuth = () => {
 
             const data = await logout();
             setUser(null);
+            return data;
             
         } catch (error) {
             console.error(error.message);
