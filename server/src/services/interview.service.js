@@ -30,6 +30,26 @@ async function analyzeInterviewData({
     });
 
 
+    const aiGapMap = new Map(aiReport.skillGap.map((gap) => [
+        gap.skill.toLowerCase(),
+        gap
+    ]));
+
+
+    const skillGaps = skillAnalysis.skillGaps.map((skill, index) => {
+
+        const aiGap = aiGapMap.get(skill.toLowerCase());
+
+        return {
+            skill,
+            severity: aiGap?.severity || "medium",
+            reason: aiGap?.reason || `The candidate does not have explicit evidence of ${skill} in the extracted career information.`,
+            recommendation: aiGap?.recommendation || `Review and parctice ${skill} through documentation and a practical implementation.`,
+            priority: aiGap?.priority || index + 1
+        }
+    })
+
+
     const finalReport = {
         ...aiReport,
         

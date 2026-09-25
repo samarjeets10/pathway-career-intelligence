@@ -33,7 +33,7 @@ function stripConstraints(schema) {
 
 async function callLLmWithRetry({ prompt, schema, validate, retries = 2 }) {
 
-    for (let attemp = 1; attemp <= retries; attempt++) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
         
         const completion = await groq.chat.completions.create({
             messages: [

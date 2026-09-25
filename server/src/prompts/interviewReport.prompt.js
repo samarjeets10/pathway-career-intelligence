@@ -77,21 +77,67 @@ function interviewReportPrompt({
         SKILL GAPS
         ==================================================
 
-        The deterministic system identified these skill gaps:
+        The deterministic skill matching system is the ONLY authority
+        for determining skill gaps.
+
+        The exact deterministic skill gaps are:
 
         ${JSON.stringify(skillAnalysis.skillGaps, null, 2)}
 
-        Only these skills may appear in the "skillGap" section.
+        You MUST return exactly one skillGap object for every skill in
+        the deterministic skill gap list.
 
-        For each provided gap:
+        CRITICAL RULES:
 
-        - explain why the skill matters for the target job
-        - explain why it is currently a gap based on the available
-        candidate evidence
-        - provide a practical recommendation for preparation
-        - assign a preparation priority
+        1. Do NOT create new skill gaps.
 
-        Do not introduce unrelated skills.
+        2. Do NOT remove any deterministic skill gaps.
+
+        3. Do NOT rename, normalize, expand, shorten, or rephrase a skill gap.
+
+        4. The "skill" field in every skillGap object MUST exactly match
+        one of the strings in the deterministic skillGaps array.
+
+        5. Preserve the exact spelling and capitalization of the
+        deterministic skill name.
+
+        6. If the deterministic list contains:
+        ["express", "aws"]
+
+        then the only valid skill values are:
+        "express"
+        and
+        "aws".
+
+        7. Do NOT convert:
+        "javascript" → "javascript (es6+)"
+        "react" → "react.js"
+        "aws" → "amazon web services"
+        "node.js" → "node"
+        or make any similar modification.
+
+        8. The AI is responsible only for enriching each deterministic
+        gap with:
+        - severity
+        - reason
+        - recommendation
+        - priority
+
+        9. The reason must explain why the exact provided skill matters
+        for the target job and why the available candidate evidence
+        does not demonstrate that skill.
+
+        10. Do not claim that a skill is missing if the candidate
+            information explicitly demonstrates that exact skill.
+
+        11. If a deterministic skill gap appears in the list, it must
+            appear in the final skillGap array.
+
+        12. If the deterministic skill gap list is empty, return an
+            empty skillGap array.
+
+        The skillGap array must therefore represent the deterministic
+        analysis exactly, with AI-generated explanations layered on top.
 
         ==================================================
         SUMMARY
@@ -204,18 +250,41 @@ function interviewReportPrompt({
         PREPARATION PLAN
         ==================================================
 
-        Create a practical day-by-day preparation roadmap.
+        Create a practical day-by-day preparation roadmap based on:
 
-        Prioritize:
-
-        1. Important missing required skills
-        2. Important technical areas
+        1. Deterministic skill gaps
+        2. Important technical areas from the target job
         3. Candidate project preparation
         4. Technical interview practice
         5. Behavioral preparation
-        6. Lower-priority preferred skills
 
-        Every day should contain:
+        The deterministic skill gap list is:
+
+        ${JSON.stringify(skillAnalysis.skillGaps, null, 2)}
+
+        RULES FOR skillGapsAddressed:
+
+        1. skillGapsAddressed MUST contain at least one item.
+
+        2. Every value in skillGapsAddressed MUST exactly match a skill
+        from the deterministic skillGaps array.
+
+        3. Do NOT invent, rename, expand, or rephrase skills.
+
+        4. If the deterministic gap list contains only a small number
+        of skills, multiple preparation days may address the same gap.
+
+        5. Every preparation day must connect its tasks to at least
+        one deterministic skill gap.
+
+        6. Do not put unrelated skills into skillGapsAddressed.
+
+        7. If the deterministic skill gap list is empty, create a
+        preparation plan focused on interview preparation and
+        candidate projects, but skillGapsAddressed must remain
+        empty because there are no deterministic gaps.
+
+        Every day must contain:
 
         - day
         - focus
@@ -224,20 +293,6 @@ function interviewReportPrompt({
         - skillGapsAddressed
 
         Tasks must be specific and actionable.
-
-        The preparation plan must address the provided skill gaps and
-        the actual requirements of the target job.
-
-        Every preparation-plan day MUST address at least one
-        identified skill gap.
-
-        The skillGapsAddressed array must never be empty.
-
-        Only use skills from the deterministic skill gap list.
-
-        If a day's main focus is not directly related to a skill gap,
-        connect that day's tasks to an identified gap through interview
-        preparation or practical application.
 
         ==================================================
 
