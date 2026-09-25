@@ -1,70 +1,108 @@
-import { useState } from 'react'; 
-import { useAuth } from '../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 function RegisterForm() {
-
-    const { loading, handleRegister } = useAuth();
+    const { actionLoading, handleRegister } = useAuth();
     const navigate = useNavigate();
 
-    const [username, setUserName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [form, setForm] = useState({
+        username: "",
+        email: "",
+        password: "",
+    });
+    const [error, setError] = useState("");
 
-    const handleSubmit = async (e) => {
-    e.preventDefault();
-    await handleRegister({username, email, password});
+    const handleChange = (event) => {
+        setForm((current) => ({
+            ...current,
+            [event.target.name]: event.target.value,
+        }));
+    };
 
-        navigate("/");
-  }
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setError("");
 
-  if (loading) {
-    return (<main>Loading...</main>)
-  }
+        try {
+            await handleRegister(form);
+            navigate("/dashboard", { replace: true });
+        } catch (err) {
+            setError(err.message);
+        }
+    };
 
-  return (
-    <form onSubmit={handleSubmit} 
-    className='w-full flex flex-col gap-6'>
-        <div className='flex flex-col gap-2'>
-            <label htmlFor="username" className='text-md'>User Name</label>
-            <input 
-            onChange={(e) => {
-                setUserName(e.target.value);
-            }}
-            id='username'
-            name='username'
-            type="text" 
-            className='px-2 py-1 border rounded-md outline-none border-neutral-300' placeholder='Enter User Name'/>
-        </div>
-        <div className='flex flex-col gap-2'>
-            <label htmlFor="email" className='text-md'>Email</label>
-            <input 
-            onChange={(e) => {
-                setEmail(e.target.value);
-            }}
-            id='email'
-            name='email'
-            type="email" 
-            className='px-2 py-1 border rounded-md outline-none border-neutral-300' placeholder='Enter your email'/>
-        </div>
-        <div className='flex flex-col gap-2'>
-            <label htmlFor="password" className='text-md'>Password</label>
-            <input 
-            onChange={(e) => {
-                setPassword(e.target.value);
-            }}
-            id='password'
-            name='password'
-            type="password" 
-            className='px-2 py-1 border rounded-md outline-none border-neutral-300' placeholder='Enter your password' />
-        </div>
-        
-        <div className='flex flex-col gap-4'>
-            <button className='px-2 py-1 bg-neutral-900 text-md text-white rounded-md cursor-pointer'>Register</button>
-            <button className='p-2 py-1 border border-neutral-300 text-md rounded-md cursor-pointer'>Sign In with Google</button>
-        </div>
-    </form>
-  )
+    return (
+        <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-5">
+            {error && (
+                <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                    {error}
+                </p>
+            )}
+
+            <div className="flex flex-col gap-2">
+                <label htmlFor="register-username" className="text-sm font-medium">Username</label>
+                <input
+                    id="register-username"
+                    name="username"
+                    type="text"
+                    autoComplete="username"
+                    required
+                    minLength={3}
+                    value={form.username}
+                    onChange={handleChange}
+                    placeholder="Choose a username"
+                    className="rounded-md border border-neutral-300 px-3 py-2 outline-none focus:border-neutral-800"
+                />
+            </div>
+
+            <div className="flex flex-col gap-2">
+                <label htmlFor="register-email" className="text-sm font-medium">Email</label>
+                <input
+                    id="register-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="you@example.com"
+                    className="rounded-md border border-neutral-300 px-3 py-2 outline-none focus:border-neutral-800"
+                />
+            </div>
+
+            <div className="flex flex-col gap-2">
+                <label htmlFor="register-password" className="text-sm font-medium">Password</label>
+                <input
+                    id="register-password"
+                    name="password"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    minLength={8}
+                    value={form.password}
+                    onChange={handleChange}
+                    placeholder="Create a password"
+                    className="rounded-md border border-neutral-300 px-3 py-2 outline-none focus:border-neutral-800"
+                />
+            </div>
+
+            <button
+                type="submit"
+                disabled={actionLoading}
+                className="w-full rounded-md bg-neutral-900 px-3 py-2 text-sm text-white disabled:cursor-not-allowed disabled:opacity-60"
+            >
+                {actionLoading ? "Creating account..." : "Create account"}
+            </button>
+
+            <p className="text-center text-sm text-neutral-500">
+                Already have an account?{" "}
+                <Link to="/login" className="font-semibold text-neutral-900">
+                    Login
+                </Link>
+            </p>
+        </form>
+    );
 }
 
-export default RegisterForm
+export default RegisterForm;
