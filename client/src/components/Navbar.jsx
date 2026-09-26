@@ -8,12 +8,11 @@ function Navbar() {
     <div className='flex justify-between items-center p-4 sm:px-12 lg:px-24 xl:40 sticky top-0 z-20 backdrop-blur-2xl font-medium bg-white/50'>
           <h2 className='text-2xl font-semibold'>Pathway.</h2>
 
-        <div className='hidden h-full md:flex items-center justify-between gap-12 px-6 py-2 bg-neutral-100 rounded-xl'>
-            <a href="#features" className='text-sm font-normal text-neutral-800'><span>Features</span></a>
-            <a href="#pricing" className='text-sm font-normal text-neutral-800'><span>Pricing</span></a>
-            <a href="#about" className='text-sm font-normal text-neutral-800'><span>About</span></a>
-            <a href="#contact" className='text-sm font-normal text-neutral-800'><span>Contact</span></a>
-            <a href="#blog" className='text-sm font-normal text-neutral-800'><span>Blog</span></a>
+        <div className='hidden h-full lg:flex items-center justify-between gap-12 px-6 py-2 bg-neutral-100 rounded-xl'>
+            <a href="#features" className='text-sm font-normal text-neutral-800'><span>How it works?</span></a>
+            <a href="#pricing" className='text-sm font-normal text-neutral-800'><span>Features</span></a>
+            <a href="#about" className='text-sm font-normal text-neutral-800'><span>Product</span></a>
+            <a href="#contact" className='text-sm font-normal text-neutral-800'><span>Resources</span></a>
         </div>
 
         <div className='flex items-center justify-between gap-2'>
