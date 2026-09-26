@@ -65,17 +65,10 @@ function LoginForm() {
             <button
                 type="submit"
                 disabled={actionLoading}
-                className="w-full rounded-md bg-neutral-900 px-3 py-2 text-sm text-white disabled:cursor-not-allowed disabled:opacity-60"
+                className="w-full rounded-md bg-neutral-800 px-3 py-2 text-md font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
             >
                 {actionLoading ? "Logging in..." : "Login"}
             </button>
-
-            <p className="text-center text-sm text-neutral-500">
-                Don't have an account?{" "}
-                <Link to="/register" className="font-semibold text-neutral-900">
-                    Create one
-                </Link>
-            </p>
         </form>
     );
 }

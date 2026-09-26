@@ -41,7 +41,7 @@ function RegisterForm() {
             )}
 
             <div className="flex flex-col gap-2">
-                <label htmlFor="register-username" className="text-sm font-medium">Username</label>
+                <label htmlFor="register-username" className="text-sm font-semibold">Username</label>
                 <input
                     id="register-username"
                     name="username"
@@ -57,7 +57,7 @@ function RegisterForm() {
             </div>
 
             <div className="flex flex-col gap-2">
-                <label htmlFor="register-email" className="text-sm font-medium">Email</label>
+                <label htmlFor="register-email" className="text-sm font-semibold">Email</label>
                 <input
                     id="register-email"
                     name="email"
@@ -72,7 +72,7 @@ function RegisterForm() {
             </div>
 
             <div className="flex flex-col gap-2">
-                <label htmlFor="register-password" className="text-sm font-medium">Password</label>
+                <label htmlFor="register-password" className="text-sm font-semibold">Password</label>
                 <input
                     id="register-password"
                     name="password"
@@ -95,12 +95,6 @@ function RegisterForm() {
                 {actionLoading ? "Creating account..." : "Create account"}
             </button>
 
-            <p className="text-center text-sm text-neutral-500">
-                Already have an account?{" "}
-                <Link to="/login" className="font-semibold text-neutral-900">
-                    Login
-                </Link>
-            </p>
         </form>
     );
 }
