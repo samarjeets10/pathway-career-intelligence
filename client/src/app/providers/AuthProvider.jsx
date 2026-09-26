@@ -1,28 +1,42 @@
-import { createContext, useState } from "react";
+import { createContext, useCallback, useEffect, useMemo, useState } from "react";
+import { getMe } from "./services/auth.api";
 
+export const AuthContext = createContext(null);
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const AuthContext = createContext();
-
-export const AuthProvider = ({ children }) => {
-
+export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [actionLoading, setActionLoading] = useState(false);
+
+    const initializeAuth = useCallback(async () => {
+        try {
+            const data = await getMe();
+            setUser(data.user ?? null);
+        } catch {
+            setUser(null);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        initializeAuth();
+    }, [initializeAuth]);
+
+    const value = useMemo(
+        () => ({
+            user,
+            setUser,
+            loading,
+            actionLoading,
+            setActionLoading,
+        }),
+        [user, loading, actionLoading]
+    );
 
     return (
-        <AuthContext.Provider value={{ user, setUser, loading, setLoading }}>
-            { children }
+        <AuthContext.Provider value={value}>
+            {children}
         </AuthContext.Provider>
-    )
-};
-
-
-// export const useAuth = () => {
-//     const context = useContext(AuthContext);
-// 
-//     if (context === undefined) {
-//         throw new Error("useAuth must be used with an AuthProvider")
-//     }
-// 
-//     return context;
-// }
+    );
+}
