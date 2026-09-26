@@ -1,4 +1,5 @@
 import { Navigate, useLocation } from "react-router-dom";
+import { Spinner } from "@/components/ui/spinner"
 import { useAuth } from "../hooks/useAuth";
 
 function Protected({ children }) {
@@ -8,7 +9,7 @@ function Protected({ children }) {
     if (loading) {
         return (
             <main className="min-h-screen grid place-items-center">
-                <p className="text-sm text-neutral-500">Checking your session...</p>
+                <Spinner />
             </main>
         );
     }

@@ -9,7 +9,7 @@ function Login() {
 
         <div className='w-full h-full py-4 px-6 flex flex-col gap-4 justify-between items-center'>
           <div>
-            <h3 className='text-xl font-bold'>Pathway</h3>
+            <h3 className='text-2xl font-semibold'>Pathway</h3>
           </div>
 
           <div className='flex flex-col gap-12'>
