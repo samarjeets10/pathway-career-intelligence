@@ -10,6 +10,7 @@ function Navbar() {
 
         <div className='hidden h-full lg:flex items-center justify-between gap-12 px-6 py-2 bg-neutral-100 rounded-xl'>
             <a href="#features" className='text-sm font-normal text-neutral-800'><span>How it works?</span></a>
+            <a href="#pricing" className='text-sm font-normal text-neutral-800'><span>Feature</span></a>
             <a href="#pricing" className='text-sm font-normal text-neutral-800'><span>About</span></a>
             <a href="#about" className='text-sm font-normal text-neutral-800'><span>Contact</span></a>
         </div>

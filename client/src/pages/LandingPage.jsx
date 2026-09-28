@@ -4,6 +4,8 @@ import Navbar from '../components/Navbar'
 import Hero from '../components/Hero'
 import Title from '../components/Title'
 import ProblemGrid from '@/components/ProblemGrid'
+import CtaSection from '@/components/CtaSection'
+import Footer from "../components/Footer"
 
 function LandingPage() {
   return (
@@ -12,6 +14,8 @@ function LandingPage() {
       <Hero />
       <Title title={"Job Descriptions Aren't Enough"} dec={"You have the resume and the target role. Turning them into a clear picture of your readiness shouldn't be manual."} />
       <ProblemGrid />
+      <CtaSection />
+      <Footer />
     </div>
   )
 }
