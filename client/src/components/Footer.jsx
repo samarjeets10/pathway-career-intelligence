@@ -1,12 +1,12 @@
-import React from 'react'
 import { Mail }from "lucide-react"
 
 function Footer() {
+
   return (
     <div className='w-full py-6 min-h-80 mt-12 bg-neutral-900 text-neutral-100'>
         <div className='py-12 px-4 sm:px-12 lg:px-24 xl:px-40 flex flex-col lg:flex-row justify-between gap-8'>
           <div className='w-full lg:w-1/2 flex flex-col gap-4'>
-            <h1 className='text-4xl font-semibold max-w-sm'>Lat's Build Your Future with Pathway.</h1>
+            <h1 className='text-4xl font-semibold max-w-sm'>Let's Build Your Future with Pathway.</h1>
 
             <div className='p-2 mt-2 w-fit border-2 border-neutral-600 flex items-center gap-8 justify-between rounded-full'>
               <div className='flex items-center gap-2'>
