@@ -1,4 +1,4 @@
-import HeroImage from "../assets/Rectangle 3.svg"
+import HeroImage from "../assets/pathway-dash.png"
 import { Link } from 'react-router-dom'
 
 function Hero() {
