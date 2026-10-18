@@ -6,6 +6,7 @@ import Register from "../features/auth/pages/Register"
 import Dashboard from "../features/auth/pages/Dashboard"
 import Protected from "../features/auth/components/Protected"
 import PublicOnly from "../features/auth/components/PublicOnly"
+import DashboardLayout from "../components/layout/DashboardLayout";
 
 export const router = createBrowserRouter([
     {
@@ -32,9 +33,16 @@ export const router = createBrowserRouter([
         path: "/dashboard",
         element: (
             <Protected>
-                <Dashboard />
+            <DashboardLayout />
             </Protected>
         ),
+        
+        children: [
+            {
+                index: true,
+                element: <Dashboard />,
+            },
+        ],
     },
 
     {

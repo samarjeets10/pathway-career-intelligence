@@ -36,7 +36,7 @@ export async function login({ email, password }) {
 
         return response.data;
     } catch (error) {
-        throw new Error(getErrorMessage(error));
+        throw new Error(getErrorMessage("Failed to login",error));
     }
 }
 
