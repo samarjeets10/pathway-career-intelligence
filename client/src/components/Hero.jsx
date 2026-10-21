@@ -17,8 +17,8 @@ function Hero() {
         <p className='text-sm font-normal text-neutral-500 max-w-xl'>Pathway maps your skills to your target roles, helping you identify gaps, prepare with purpose, and navigate your next career move with clarity.</p>
 
         <div className='flex items-center justify-center gap-2'>
-            <Link to='/register'><button className='px-6 py-2 text-md bg-neutral-800 text-neutral-100 rounded-full cursor-pointer'>start for free</button></Link>
-            <button className='px-4 py-2 border border-neutral-400 rounded-full text-neutral-800 cursor-pointer active:bg-neutral-800 active:text-neutral-100'>watch a demo</button>
+            <Link to='/register'><button className='px-6 py-3 text-md bg-neutral-800 text-neutral-100 rounded-full cursor-pointer'>start for free</button></Link>
+            <button className='px-4 py-3 border border-neutral-200 rounded-full bg-[#c8f36b] text-neutral-800 cursor-pointer'>watch a demo</button>
         </div>
 
         <div className='mt-8'>

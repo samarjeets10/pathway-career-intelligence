@@ -4,11 +4,11 @@ import {
   Files,
   BriefcaseBusiness,
   MessageSquareText,
-  Settings,
   LogOut,
 } from "lucide-react";
 
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../features/auth/hooks/useAuth"
 
 import {
   Sidebar,
@@ -22,6 +22,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { useState } from "react";
 
 const navigationItems = [
   {
@@ -52,11 +53,29 @@ const navigationItems = [
 ];
 
 function AppSidebar() {
+
+const { actionLoading, handleLogout } = useAuth();
+const navigate = useNavigate();
 const location = useLocation();
+
+const [error, setError] = useState("");
+
+const userLogoutHandler = async () => {
+  try {
+
+    await handleLogout();
+    const from = location.state?.from?.pathname;
+    navigate(from || "/", { replace: true });
+
+  } catch (err) {
+    setError(err.message);
+  }
+}
+
 
 return ( 
 
-  <Sidebar collapsible="icon"> 
+  <Sidebar className='py-4 px-4' collapsible="icon"> 
     <SidebarHeader> 
       <SidebarMenu> 
         <SidebarMenuItem>
@@ -65,7 +84,7 @@ return (
           tooltip="Pathway"
           size="lg">
             <div className="flex flex-col gap-0.5">
-              <span className="font-semibold">Pathway</span>
+              <span className="font-semibold text-xl">Pathway</span>
               <span className="text-xs text-muted-foreground">
                 Career Intelligence
               </span>
@@ -104,25 +123,6 @@ return (
         })}
       </SidebarMenu>
     </SidebarGroup>
-
-    <SidebarGroup>
-      <SidebarGroupLabel>Preferences</SidebarGroupLabel>
-
-      <SidebarMenu>
-        <SidebarMenuItem>
-          <SidebarMenuButton
-            render={<Link to="/dashboard/settings" />}
-            isActive={location.pathname.startsWith(
-              "/dashboard/settings"
-            )}
-            tooltip="Settings"
-          >
-            <Settings />
-            <span>Settings</span>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      </SidebarMenu>
-    </SidebarGroup>
   </SidebarContent>
 
   <SidebarFooter>
@@ -143,9 +143,13 @@ return (
       </SidebarMenuItem>
 
       <SidebarMenuItem>
-        <SidebarMenuButton tooltip="Log out">
+        <SidebarMenuButton
+        className='w-fit px-4 cursor-pointer bg-[#c8f36b] mt-4 border border-neutral-200 rounded-full' 
+        disabled={actionLoading}
+        onClick={userLogoutHandler}
+        tooltip="Log out">
           <LogOut />
-          <span>Log out</span>
+          <span className='text-md font-semibold'>{actionLoading ? "Loging out..." : "Log out"}</span>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>

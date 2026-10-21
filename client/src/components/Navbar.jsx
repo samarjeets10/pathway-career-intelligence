@@ -15,7 +15,7 @@ function Navbar() {
 
         <div className='flex items-center justify-between gap-2'>
           <Link to="/register"><button className='px-6 py-2 bg-neutral-800 text-white/90 rounded-full cursor-pointer active:bg-transparent active:border active:text-neutral-800 active:border-neutral-800'>get started</button></Link>
-          <Link to="/login"><button className='px-4 py-2 border border-neutral-400 rounded-full text-neutral-800 cursor-pointer active:bg-neutral-800 active:text-neutral-100'>Login</button></Link>
+          <Link to="/login"><button className='px-4 py-2 border border-neutral-200 bg-[#c8f36b] rounded-full text-neutral-800 cursor-pointer active:bg-neutral-800 active:text-neutral-100'>Login</button></Link>
         </div>
     </div>
   )

@@ -38,7 +38,7 @@ function WorkflowSection() {
 
   return (
     <section className='w-full px-4 sm:px-12 lg:px-24 xl:px-40 py-4'>
-        <div className="journey-track mt-12 grid gap-3 sm:grid-cols-2 lg:mt-16 lg:grid-cols-4">
+        <div className="journey-track mt-12 grid gap-3 sm:grid-cols-2 lg:mt-16">
           {steps.map((step, index) => {
             const Icon = step.icon
             return (
