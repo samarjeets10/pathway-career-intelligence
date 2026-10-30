@@ -42,24 +42,27 @@ async function registerUserController(req, res) {
        throw new apiError(400, "All fields are required.");
     }
 
+    const normalizedUserName = username.trim().toLowerCase();
+    const normalizedEmail = email.trim().toLowerCase();
+
     const isUserAlreadyExists = await userModel.findOne({
-        $or: [ {username},  {email} ],
+        $or: [ {username: normalizedUserName},  {email: normalizedEmail} ],
     })
 
     if (isUserAlreadyExists) {
         // user exists with the username :
-        if (isUserAlreadyExists.username === username.toLowerCase()) {
+        if (isUserAlreadyExists.username === normalizedUserName) {
             throw new apiError(409, "User with this username already exists.");
         }
 
-        if (isUserAlreadyExists.email === email.toLowerCase()) {
+        if (isUserAlreadyExists.email === normalizedEmail) {
             throw new apiError(409, "account with this email is already exists.")
         }
     };
 
     const user = await userModel.create({
-        username: username.toLowerCase(),
-        email, 
+        username: normalizedUserName,
+        email: normalizedEmail,
         password
     });
 
@@ -85,7 +88,7 @@ async function registerUserController(req, res) {
     res.status(201).cookie("accessToken", accessToken, options).cookie("refreshToken", refreshToken, options).json(
         new apiResponse(200,
             {
-                user: registeredUser, accessToken, refreshToken
+                user: registeredUser,
             },
             "User registered successfully."
         )
@@ -134,7 +137,7 @@ async function loginUserController(req, res) {
     res.status(200).cookie("accessToken", accessToken, options).cookie("refreshToken", refreshToken, options).json(
         new apiResponse(200,
             {
-                user: loggedinUser, accessToken, refreshToken
+                user: loggedinUser
             },
             "User logged in SuccessFully."
         )
@@ -184,13 +187,16 @@ async function logoutUserController(req,res) {
  */
 async function getMeController(req, res) {
 
-    const user = await userModel.findById(user._id).select("-password -refreshToken");
+//     const user = await userModel.findById(user._id).select("-password -refreshToken");
+// 
+//     if (!user) {
+//         throw new apiError(404, "User not found.");
+//     }
 
-    if (!user) {
-        throw new apiError(404, "User not found.");
-    }
-
-    return res.status(200).json(200, user, "Current user fetched successfully.");
+    return res.status(200).json({
+        message: "User fetched successfully.",
+        user: req.user
+    });
 }
 
 
