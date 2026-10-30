@@ -53,7 +53,7 @@ async function getInterviewRepostController(req, res) {
     const report = await interviewReportModel
     .find({ user: req.user._id})
     .select("-resume -selfDescription -technicleQuestions -behavioralQuestions -preparationPlan")
-    .sort({createdat: -1});
+    .sort({createdAt: -1});
 
     return res.status(200).json(
         new apiResponse(200, report, "Interview Repost fetched successfully.")
@@ -62,6 +62,8 @@ async function getInterviewRepostController(req, res) {
 
 async function getInterviewRepostByIdController(req, res) {
     const { id } = req.params;
+
+    console.log("ID RECEIVED:", JSON.stringify(id));
 
     if (!mongoose.isValidObjectId(id)) {
         throw new apiError(400, "Invalid repost Id.");
