@@ -6,16 +6,27 @@ const cors = require('cors');
 
 const app = express();
 
-app.use(express.json());
+const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
+
+app.use(express.json({
+    limit: "16kb"
+}));
+
 app.use(cookieParser());
+
+app.use(express.urlencoded({
+    extended: true,
+    limit: "16kb"
+}));
+
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: CLIENT_ORIGIN,
     credentials: true
-}))
+}));
 
 // using all the routes here :
 app.use("/api/auth", authRouter);
-app.use("/api/interview", interviewRouter)
+app.use("/api/interview", interviewRouter);
 
 
 module.exports = app;

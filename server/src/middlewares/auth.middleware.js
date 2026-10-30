@@ -1,13 +1,15 @@
 const jwt = require('jsonwebtoken');
+const userModel = require('../models/user.model');
 const tokenBlacklistModel = require('../models/blacklist.model');
+const apiError = require('../utils/apiError');
 
-async function authUser(req, res, next) {
+async function verifyToken(req, res, next) {
 
-    const token = req.headers.authorization?.split(" ")[1] || req.cookies?.token;
+    const token = req.headers.authorization?.split(" ")[1] || req.cookies?.accessToken;
 
     if (!token) {
         return res.status(401).json({
-            message: "token not provided"
+            message: "Unauthorized request."
         })
     }
 
@@ -25,20 +27,21 @@ async function authUser(req, res, next) {
 
     try {
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-        req.user = decoded;
+        const user = await userModel.findById(decodedToken?._id).select("-password -refreshToken");
 
+        if (!user) {
+            throw new apiError(401, "Invalid access token!");
+        }
+
+        req.user = user;
         next();
 
     } catch (error) {
-        return res.status(401).json({
-            message: "Invalid token"
-        })
+        throw new apiError(401, error?.message || "Invalid access token!")
     }
 
 }
 
-module.exports = {
-    authUser,
-}
+module.exports = verifyToken;

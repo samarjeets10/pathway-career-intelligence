@@ -11,7 +11,7 @@ const interviewRouter = express.Router();
  * @access Private
  */
 
-interviewRouter.post("/", authMiddleware.authUser, upload.single("resume"), interviewController.generateInterviewReportController);
+interviewRouter.post("/", authMiddleware, upload.single("resume"), interviewController.generateInterviewReportController);
 
 
 module.exports = interviewRouter;
