@@ -17,7 +17,7 @@ return (
   <div className="mx-auto w-full max-w-7xl space-y-8"> <section className="space-y-2"> <p className="text-sm text-muted-foreground">
   Your career workspace </p>
       <h1 className="text-3xl font-semibold tracking-tight">
-        Dashboard
+        Welcome back, {user?.username}
       </h1>
 
       <p className="max-w-2xl text-sm text-muted-foreground">
@@ -73,8 +73,8 @@ return (
     <section className='space-y-4 rounded-xl border p-6'>
       <div className='flex items-center justify-between'>
         <h2 className='text-lg font-semibold'>Recent reposts</h2>
-        <Link to='/dashboard/interviews' className='text-sm underline'>
-        { total === 0 ? "Create your first report" : "View all" }
+        <Link to='/dashboard/interviews' className='text-sm'>
+        { total === 0 ? "Create your first report" : <button className="px-4 py-1 border rounded-xl cursor-pointer">View more</button> }
         </Link>
       </div>
 
@@ -88,8 +88,8 @@ return (
 
       {
         reports.slice(0, 3).map((r) => 
-          <div key={r._id} className="flex items-center justify-between gap-4 text-sm">
-            <span className="truncate">{r.jobDescription.slice(0, 70)}...</span>
+          <div key={r._id} className="flex items-center justify-between gap-4 p-2 text-sm border rounded-md">
+            <span className="truncate">{r.jobDescription.slice(0, 100)}...</span>
             <span className="font-semibold">{r.matchScore}%</span>
           </div>
         )

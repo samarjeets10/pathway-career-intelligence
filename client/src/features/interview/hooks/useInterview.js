@@ -2,14 +2,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createReport, fetchReport, fetchReports } from "../services/interview.api";
 
 export const useReports = () => {
-    useQuery({
+    return useQuery({
         queryKey: ["interviews"],
         queryFn: fetchReports
     });
 }
 
 export const useReport = (id) => {
-    useQuery({
+    return useQuery({
         queryKey: ["interviews", id],
         queryFn: () => fetchReport(id),
         enabled: !!id
