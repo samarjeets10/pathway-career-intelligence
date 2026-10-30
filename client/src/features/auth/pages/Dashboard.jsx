@@ -1,4 +1,16 @@
+import { Link } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
+import { useReports } from "@/features/interview/hooks/useInterview";
+
 function Dashboard() {
+
+  const { user } = useAuth();
+  const { data: reports = [], isLoading } = useReports();
+
+  const total = reports.length;
+  const avgMatch = total ? Math.round(reports.reduce((sum, r) => sum + r.matchScore, 0) / total) : null;
+
+  const skillGapCount = reports.reduce((sum, r) => sum + (r.skillGaps?.length ?? 0), 0);
 
 return ( 
 
@@ -20,7 +32,9 @@ return (
           Resumes Analyzed
         </p>
 
-        <p className="mt-3 text-3xl font-semibold">—</p>
+        <p className="mt-3 text-3xl font-semibold">
+          {isLoading ? "..." : total}
+        </p>
 
         <p className="mt-2 text-xs text-muted-foreground">
           Your analysis history will appear here.
@@ -32,7 +46,9 @@ return (
           Job Matches
         </p>
 
-        <p className="mt-3 text-3xl font-semibold">—</p>
+        <p className="mt-3 text-3xl font-semibold">
+          {avgMatch === null ? "-" : `${avgMatch}%`}
+        </p>
 
         <p className="mt-2 text-xs text-muted-foreground">
           Your matching results will appear here.
@@ -44,7 +60,9 @@ return (
           Skills to Improve
         </p>
 
-        <p className="mt-3 text-3xl font-semibold">—</p>
+        <p className="mt-3 text-3xl font-semibold">
+          {isLoading ? "..." : skillGapCount}
+        </p>
 
         <p className="mt-2 text-xs text-muted-foreground">
           Identify gaps from your resume analyses.
@@ -52,15 +70,30 @@ return (
       </div>
     </section>
 
-    <section className="rounded-xl border border-dashed p-8">
-      <h2 className="text-lg font-semibold">
-        Start with a resume analysis
-      </h2>
+    <section className='space-y-4 rounded-xl border p-6'>
+      <div className='flex items-center justify-between'>
+        <h2 className='text-lg font-semibold'>Recent reposts</h2>
+        <Link to='/dashboard/interviews' className='text-sm underline'>
+        { total === 0 ? "Create your first report" : "View all" }
+        </Link>
+      </div>
 
-      <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-        Compare your resume with a target job description
-        to understand your strengths and identify missing skills.
-      </p>
+      {
+        !isLoading && total === 0 && (
+          <p className="text-sm text-muted-foreground">
+            Upload a resume and job description to get your first match score.
+          </p>
+        )
+      }
+
+      {
+        reports.slice(0, 3).map((r) => 
+          <div key={r._id} className="flex items-center justify-between gap-4 text-sm">
+            <span className="truncate">{r.jobDescription.slice(0, 70)}...</span>
+            <span className="font-semibold">{r.matchScore}%</span>
+          </div>
+        )
+      }
     </section>
   </div>
 
