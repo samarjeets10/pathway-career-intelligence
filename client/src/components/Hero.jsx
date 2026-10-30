@@ -1,4 +1,4 @@
-import HeroImage from "../assets/pathway-dash.png"
+import HeroImage from "../assets/dashboard_hero_asset.png"
 import { Link } from 'react-router-dom'
 
 function Hero() {
@@ -21,7 +21,7 @@ function Hero() {
             <button className='px-4 py-3 border border-neutral-200 rounded-full bg-[#c8f36b] text-neutral-800 cursor-pointer'>watch a demo</button>
         </div>
 
-        <div className='mt-8'>
+        <div className='mt-8 border rounded-lg overflow-hidden shadow-neutral-100 shadow-xl'>
             <img src={HeroImage} alt="image" className='w-full max-w-6xl' />
         </div>
 

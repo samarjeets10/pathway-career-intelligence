@@ -54,7 +54,7 @@ const navigationItems = [
 
 function AppSidebar() {
 
-const { actionLoading, handleLogout } = useAuth();
+const { user, actionLoading, handleLogout } = useAuth();
 const navigate = useNavigate();
 const location = useLocation();
 
@@ -128,15 +128,17 @@ return (
   <SidebarFooter>
     <SidebarMenu>
       <SidebarMenuItem>
-        <SidebarMenuButton tooltip="Account">
-          <div className="flex size-7 items-center justify-center rounded-full bg-muted text-xs font-semibold">
-            U
+        <SidebarMenuButton tooltip={user?.username || "Account"}>
+          <div className="flex size-7 items-center justify-center rounded-full bg-muted text-xs font-bold border">
+            {user?.username?.charAt(0)?.toUpperCase() || "U"}
           </div>
 
-          <div className="flex flex-col gap-0.5">
-            <span className="text-sm font-medium">Your Account</span>
+          <div className="flex flex-col">
+            <span className="text-sm font-medium">
+              {user?.username || "User"}
+            </span>
             <span className="text-xs text-muted-foreground">
-              Career workspace
+              {user?.email || "Career workspace"}
             </span>
           </div>
         </SidebarMenuButton>

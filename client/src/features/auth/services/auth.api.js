@@ -1,17 +1,4 @@
-import axios from "axios";
-
-const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
-    withCredentials: true,
-});
-
-function getErrorMessage(error) {
-    return (
-        error.response?.data?.message ||
-        error.message ||
-        "Something went wrong. Please try again."
-    );
-}
+import { api, getErrorMessage } from "@/lib/axios"
 
 export async function register({ username, email, password }) {
     try {
@@ -42,7 +29,7 @@ export async function login({ email, password }) {
 
 export async function logout() {
     try {
-        const response = await api.get("/api/auth/logout");
+        const response = await api.post("/api/auth/logout");
         return response.data;
     } catch (error) {
         throw new Error(getErrorMessage(error));
@@ -52,7 +39,7 @@ export async function logout() {
 export async function getMe() {
     try {
         const response = await api.get("/api/auth/get-me");
-        return { user: response.data.data }
+        return { user: response.data.user }
     } catch (error) {
         throw new Error(getErrorMessage(error));
     }
