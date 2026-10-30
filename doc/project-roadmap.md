@@ -16,6 +16,8 @@ Nothing to build here — just noting it's the baseline everything else sits on.
 
 ## Phase 1 — Harden Authentication & Authorization
 
+> **Status (2026-10-30):** access/refresh tokens with rotation, httpOnly cookies, env-driven CORS, `apiError`/`apiResponse` and a central error handler are in. Remaining: Zod validation, rate limiting, blacklist TTL decision, per-device sessions.
+
 **Why first:** every other phase adds user-owned resources. If ownership and session handling aren't solid now, every later model inherits the same weaknesses.
 
 **Fix what exists:**
@@ -71,6 +73,8 @@ Nothing to build here — just noting it's the baseline everything else sits on.
 
 ## Phase 4 — Deterministic Skill Matching Engine
 
+> **Status (2026-10-30):** the deterministic engine (`skillMatching.service.js`, alias map, weighted score) already exists and drives the interview report. This phase formalizes it: persist as `JobAnalysis`, enable partial matching, rule-based gap severity.
+
 **Why this phase matters for the portfolio:** this is the "real backend logic" phase — no AI dependency, pure deterministic business rules. Strong interview material.
 
 **Architectural decision to resolve first:** does `JobAnalysis` reference `Resume` or `ResumeVersion`? Given `ResumeVersion` is the actual content snapshot, analysis almost certainly needs to pin to a specific version (so results stay reproducible even if the resume is edited later) — but this should be confirmed and documented before modeling starts.
@@ -84,14 +88,14 @@ Nothing to build here — just noting it's the baseline everything else sits on.
 
 **New models:** `Skill`, `JobAnalysis`
 
-**Exit criteria:** given a resume and a job, the system deterministically produces a match score and a categorized skill list — no Gemini call involved yet.
+**Exit criteria:** given a resume and a job, the system deterministically produces a match score and a categorized skill list — no Groq call involved yet.
 
 ---
 
-## Phase 5 — AI Service Layer (Gemini Integration)
+## Phase 5 — AI Service Layer (Groq Integration)
 
 **Features:**
-- AI service abstraction: `Controller → Application Service → AI Service → Prompt Builder → Gemini Provider → Structured Output → Validation → Application Logic`
+- AI service abstraction: `Controller → Application Service → AI Service → Prompt Builder → Groq Provider → Structured Output → Validation → Application Logic`
 - Resume analysis and improvement suggestions
 - Job description insights / skill-gap explanations (built on top of Phase 4's deterministic output, not replacing it)
 - ATS optimization suggestions
@@ -100,7 +104,7 @@ Nothing to build here — just noting it's the baseline everything else sits on.
 
 **Guardrail carried through every AI feature from here on:** the AI must never invent experience, skills, projects, employers, or achievements. Validation layer enforces this by checking AI suggestions against what's actually present in the resume/job data.
 
-**Exit criteria:** Gemini calls are fully isolated behind a service boundary — no controller ever imports the Gemini SDK directly — and AI output is validated before it touches the database.
+**Exit criteria:** Groq calls are fully isolated behind a service boundary — no controller ever imports the Groq SDK directly — and AI output is validated before it touches the database.
 
 ---
 
