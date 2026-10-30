@@ -66,7 +66,7 @@
 │        ┌──────────────────┐     ┌──────────────────────────┐    │
 │        │ BUSINESS LOGIC   │     │ EXTERNAL SERVICE LAYER   │    │
 │        │                  │     │                          │    │
-│        │ Skill Matching   │     │ Gemini AI                │    │ 
+│        │ Skill Matching   │     │ Groq AI                  │    │ 
 │        │ ATS Scoring      │     │ File Storage             │    │
 │        │ Resume Logic     │     │ Puppeteer                │    │
 │        │ Authorization    │     │ PDF Renderer             │    │
@@ -226,7 +226,7 @@ For example:
 
 POST /api/v1/resumes/analyze
 
-The request shouldn't directly hit Gemini.
+The request shouldn't directly hit Groq.
 
 It should travel through:
 
@@ -513,7 +513,7 @@ Application
        Prompt Builder
              │
              ▼
-       Gemini Provider
+       Groq Provider
              │
              ▼
        Structured Output
@@ -525,7 +525,7 @@ Application
        Application Logic
 ```
 
-The application shouldn't know Gemini's implementation details.
+The application shouldn't know Groq's implementation details.
 
 For example:
 
@@ -538,7 +538,7 @@ rather than:
 
 resumeService
      ↓
-GoogleGenerativeAI(...)
+Groq(...)
 ```
 
 That separation will pay off later.
@@ -550,7 +550,7 @@ This is one of our core architectural principles.
 We don't want:
 
 ```
-Everything → Gemini
+Everything → Groq
 ```
 
 Instead:
@@ -561,7 +561,7 @@ Instead:
                ┌─────────┴─────────┐
                │                   │
                ▼                   ▼
-        Deterministic          Gemini AI
+        Deterministic          Groq AI
            Engine                  │
                │                   │
         ┌──────┼──────┐            │
@@ -585,7 +585,7 @@ Partial skills
 ATS metrics
 AI
 
-Gemini handles:
+Groq handles:
 
 Explanations
 Recommendations
@@ -887,7 +887,7 @@ This is probably the most useful diagram to put into our SYSTEM_ARCHITECTURE.md.
     ┌─────────────────┐                ┌──────────────────┐
     │ Business Logic  │                │ External Services│
     │                 │                │                  │
-    │ Skill Matching  │                │ Gemini           │
+    │ Skill Matching  │                │ Groq             │
     │ ATS Scoring     │                │ File Storage     │
     │ Skill Gaps      │                │ Puppeteer        │
     └────────┬────────┘                └──────────────────┘
@@ -923,7 +923,7 @@ This distinction should actually go into our documentation.
 | Token blacklist             | Yes              | Improved                      |
 | Resume upload               | Yes              | Yes                           |
 | Resume parsing              | Yes              | More structured               |
-| Gemini                      | Yes              | AI service abstraction        |
+| Groq                        | Yes              | AI service abstraction        |
 | Skill gaps                  | Yes              | Deterministic matching engine |
 | Match score                 | Yes              | Own scoring engine            |
 | Interview questions         | Yes              | Expanded practice system      |
