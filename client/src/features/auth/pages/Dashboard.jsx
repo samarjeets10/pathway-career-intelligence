@@ -73,7 +73,7 @@ return (
     <section className='space-y-4 rounded-xl border p-6'>
       <div className='flex items-center justify-between'>
         <h2 className='text-lg font-semibold'>Recent reposts</h2>
-        <Link to='/dashboard/interviews' className='text-sm'>
+        <Link to='/dashboard/interviews/new' className='text-sm'>
         { total === 0 ? "Create your first report" : <button className="px-4 py-1 border rounded-xl cursor-pointer">View more</button> }
         </Link>
       </div>
