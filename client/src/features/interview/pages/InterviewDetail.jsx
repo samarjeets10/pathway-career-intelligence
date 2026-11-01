@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom"
-import { useReport, useReports } from "../hooks/useInterview"
-
+import { useReport } from "../hooks/useInterview"
+import { ArrowLeft } from "lucide-react";
 
 const severityClass = {
     high: "text-destructive",
@@ -21,7 +21,7 @@ function Section({ title, children }) {
 function InterviewDetail() {
 
     const { id } = useParams();
-    const { data: r, isLoading, error } = useReports(id);
+    const { data: r, isLoading, error } = useReport(id);
     
     if (isLoading) return <p className="text-sm text-muted-foreground">Loading…</p>;
     if (error) return <p className="text-sm text-destructive">{error.message}</p>;
@@ -29,7 +29,7 @@ function InterviewDetail() {
 
   return (
     <div className='mx-auto w-full max-w-4xl space-y-6'>
-        <Link to="/dashboard/interviews" className="text-sm underline">← All reports</Link>
+        <Link to="/dashboard/interviews" className="text-sm flex items-center gap-2 w-fit bg-[#c8f36b]"><ArrowLeft size={16} /> All reports</Link>
 
         <section className="flex items-center justify-between gap-4 rounded-xl border bg-card p-5">
             <div className="min-w-0">

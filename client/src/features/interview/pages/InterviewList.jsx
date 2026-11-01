@@ -7,7 +7,7 @@ function InterviewList() {
 
   return (
     <div className='mx-auto w-full max-w-4xl space-y-6'>
-        <section className='flex items-start justify-around gap-4'>
+        <section className='flex items-start justify-between gap-4'>
             <div className='space-y-2'>
                 <h1 className='text-3xl font-semibold tracking-tight'>Interview Prep</h1>
                 <p className='text-sm text-muted-foreground'>Reports cpmparing your resume with a job: match score , skill gap, questions and a prep plan.</p>
