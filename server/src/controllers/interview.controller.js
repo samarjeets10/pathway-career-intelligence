@@ -20,8 +20,8 @@ async function generateInterviewReportController(req, res) {
 
     const { selfDescription, jobDescription } = req.body ?? {};
 
-    if (!jobDescription.trim()) {
-        throw new apiError(400, "Job description is required.")
+    if (!jobDescription?.trim()) {
+        throw new apiError(400, "Job description is required.");
     }
 
     const resumeContent = await (new pdfParse.PDFParse(Uint8Array.from(req.file.buffer))).getText();

@@ -29,25 +29,27 @@ function interviewReportPrompt({
         6. DO NOT remove any skill gaps provided by the deterministic
         analysis.
 
-        7. You may explain and prioritize the provided skill gaps,
+        7. skillGapsAddressed MUST contain at most 5 items per day.
+
+        8. You may explain and prioritize the provided skill gaps,
         but every skill gap must come from the deterministic analysis.
 
-        8. Technical questions must be relevant to the target job and
+        9. Technical questions must be relevant to the target job and
         the candidate's demonstrated skills, technologies, projects,
         and experience.
 
-        9. Behavioral questions must be grounded in the candidate's
+        10. Behavioral questions must be grounded in the candidate's
         actual background.
 
-        10. Answers should provide practical preparation guidance.
+        11. Answers should provide practical preparation guidance.
             Do not fabricate first-person experiences or achievements.
 
-        11. If the candidate has no evidence of a technology or experience,
+        12. If the candidate has no evidence of a technology or experience,
             do not claim that they have it.
 
-        12. Return ONLY valid JSON.
+        13. Return ONLY valid JSON.
 
-        13. Follow the exact structure required by the output schema.
+        14. Follow the exact structure required by the output schema.
 
         CANDIDATE INFORMATION:
 
@@ -116,24 +118,26 @@ function interviewReportPrompt({
         "node.js" → "node"
         or make any similar modification.
 
-        8. The AI is responsible only for enriching each deterministic
+        8. EVERY preparation day, including the last one, MUST contain the skillGapsAddressed field with 1 to 5 items. Never omit a required field.
+
+        9. The AI is responsible only for enriching each deterministic
         gap with:
         - severity
         - reason
         - recommendation
         - priority
 
-        9. The reason must explain why the exact provided skill matters
+        10. The reason must explain why the exact provided skill matters
         for the target job and why the available candidate evidence
         does not demonstrate that skill.
 
-        10. Do not claim that a skill is missing if the candidate
+        11. Do not claim that a skill is missing if the candidate
             information explicitly demonstrates that exact skill.
 
-        11. If a deterministic skill gap appears in the list, it must
+        12. If a deterministic skill gap appears in the list, it must
             appear in the final skillGap array.
 
-        12. If the deterministic skill gap list is empty, return an
+        13. If the deterministic skill gap list is empty, return an
             empty skillGap array.
 
         The skillGap array must therefore represent the deterministic

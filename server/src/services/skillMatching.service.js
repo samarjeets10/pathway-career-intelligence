@@ -107,6 +107,8 @@ function calculateMatchScore({
 };
 
 
+const MAX_SKILL_GAPS = 15;
+
 // skill gap analysing block :
 function analyzeSkillGap({
     resumeSkills = [],
@@ -149,7 +151,7 @@ function analyzeSkillGap({
         skillGaps: [
             ...requiredMatch.missing,
             ...preferredMatch.missing
-        ]
+        ].slice(0, MAX_SKILL_GAPS)
     }
 
 };

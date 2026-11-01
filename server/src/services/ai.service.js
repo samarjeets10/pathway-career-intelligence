@@ -35,32 +35,47 @@ async function callLLmWithRetry({ prompt, schema, validate, retries = 2 }) {
 
     for (let attempt = 1; attempt <= retries; attempt++) {
         
-        const completion = await groq.chat.completions.create({
-            messages: [
-                { 
-                    role: "system", 
-                    content: "You are an expert technical interviewer and career analyst." 
+        let completion;
+
+        try {
+            completion = await groq.chat.completions.create({
+                messages: [
+                    { 
+                        role: "system", 
+                        content: "You are an expert technical interviewer and career analyst." 
+                    },
+
+                    { 
+                        role: "user", 
+                        content: prompt 
+                    }
+                ],
+
+                model: "openai/gpt-oss-20b",
+                response_format: {
+                    type: "json_schema",
+                    json_schema: {
+                        name: "interview_report",
+                        strict: true,
+                        schema
+                    }
                 },
+                
+                temperature: 0.2,
+                max_completion_tokens: 8192
+            });
+        } catch (error) {
+            if (String(error.message).includes("json_validate_failed")) {
+                console.warn(`[ai.service] attempt ${attempt}/${retries} rejected by provider schema check`);
 
-                { 
-                    role: "user", 
-                    content: prompt 
+                if (attempt === retries) {
+                    throw new Error("The AI returned an invalid report structure. Please try again.")
                 }
-            ],
 
-            model: "openai/gpt-oss-20b",
-            response_format: {
-                type: "json_schema",
-                json_schema: {
-                    name: "interview_report",
-                    strict: true,
-                    schema
-                }
-            },
-            
-            temperature: 0.2,
-            max_completion_tokens: 8192
-        });
+                continue;
+            }
+            throw error;
+        }
 
         const responseText = completion.choices[0]?.message?.content;
 

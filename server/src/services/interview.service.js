@@ -54,9 +54,10 @@ async function analyzeInterviewData({
         ...aiReport,
         
         matchScore: skillAnalysis.matchScore,
-        skillGaps: aiReport.skillGap.map((gap) => ({
-            ...gap
-        }))
+        // skillGaps: aiReport.skillGap.map((gap) => ({
+        //     ...gap
+        // }))
+        skillGaps,
     };
 
 
