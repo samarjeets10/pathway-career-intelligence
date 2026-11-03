@@ -5,19 +5,30 @@ const connectDB = require('./src/config/database');
 
 const PORT = process.env.SERVER_PORT || 8000;
 
-connectDB();
+async function startServer() {
+    try {
 
-const server = app.listen(PORT, () => {
-    console.log("server is running on port 3000");
-});
+        await connectDB();
 
-server.on('error', (err) => {
-    console.error(err.code === 'EADDRINUSE' ? 'Port 3000 already in use.' : err);
-    process.exitCode = 1;
-});
+        const server = app.listen(PORT, () => {
+            console.log(`Server is running on Port : ${PORT}`)
+        });
 
-process.on('unhandledRejection', (reason) => console.error('Unhandled Rejection:', reason));
-process.on('uncaughtException', (err) => {
-    console.error('Uncaught Exception:', err);
-    process.exitCode = 1;
-});
+        server.on('error', (err) => {
+            console.error(err.code === 'EADDRINUSE' ? 'Port 3000 already in use.' : err);
+            process.exitCode = 1;
+        });
+
+        process.on('unhandledRejection', (reason) => console.error('Unhandled Rejection:', reason));
+        process.on('uncaughtException', (err) => {
+            console.error('Uncaught Exception:', err);
+            process.exitCode = 1;
+        });
+
+    } catch (error) {
+        console.error("Application startup faild: ", error);
+        process.exit(1);
+    }
+}
+
+startServer();

@@ -39,6 +39,9 @@ async function callLLmWithRetry({ prompt, schema, validate, retries = 2 }) {
 
         try {
             completion = await groq.chat.completions.create({
+
+                reasoning_effort: "low",
+                max_completion_tokens: 4000,
                 messages: [
                     { 
                         role: "system", 
@@ -64,6 +67,11 @@ async function callLLmWithRetry({ prompt, schema, validate, retries = 2 }) {
                 temperature: 0.2,
                 max_completion_tokens: 8192
             });
+
+            if (completion.choices[0]?.finish_reason === "length") {
+                console.warn(`[ai.service] attemp ${attempt}: output truncated`);
+            }
+
         } catch (error) {
             if (String(error.message).includes("json_validate_failed")) {
                 console.warn(`[ai.service] attempt ${attempt}/${retries} rejected by provider schema check`);

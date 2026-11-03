@@ -16,8 +16,6 @@ async function generateInterviewReportController(req, res) {
         throw new apiError(400, "Only valid PDF files are allowed.");
     }
 
-    // const resumeContent = await (new pdfParse.PDFParse(Uint8Array.from(req.file.buffer))).getText();
-
     const { selfDescription, jobDescription } = req.body ?? {};
 
     if (!jobDescription?.trim()) {
@@ -34,7 +32,7 @@ async function generateInterviewReportController(req, res) {
 
 
     const interviewReport = await interviewReportModel.create({
-        user: req.user.id,
+        user: req.user._id,
         resume: resumeContent.text,
         selfDescription,
         jobDescription,
@@ -48,7 +46,7 @@ async function generateInterviewReportController(req, res) {
 }
 
 
-async function getInterviewRepostController(req, res) {
+async function getInterviewReportController(req, res) {
 
     const report = await interviewReportModel
     .find({ user: req.user._id})
@@ -60,10 +58,8 @@ async function getInterviewRepostController(req, res) {
     )
 }
 
-async function getInterviewRepostByIdController(req, res) {
+async function getInterviewReportByIdController(req, res) {
     const { id } = req.params;
-
-    console.log("ID RECEIVED:", JSON.stringify(id));
 
     if (!mongoose.isValidObjectId(id)) {
         throw new apiError(400, "Invalid repost Id.");
@@ -83,6 +79,6 @@ async function getInterviewRepostByIdController(req, res) {
 
 module.exports = { 
     generateInterviewReportController,
-    getInterviewRepostController,
-    getInterviewRepostByIdController
+    getInterviewReportController,
+    getInterviewReportByIdController
 }

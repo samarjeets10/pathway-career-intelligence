@@ -29,7 +29,7 @@ function InterviewDetail() {
 
   return (
     <div className='mx-auto w-full max-w-4xl space-y-6'>
-        <Link to="/dashboard/interviews" className="text-sm flex items-center gap-2 w-fit bg-[#c8f36b]"><ArrowLeft size={16} /> All reports</Link>
+        <Link to="/dashboard/interviews" className="text-sm px-4 py-2 rounded-full flex items-center gap-2 w-fit bg-[#c8f36b]"><ArrowLeft size={16} /> All reports</Link>
 
         <section className="flex items-center justify-between gap-4 rounded-xl border bg-card p-5">
             <div className="min-w-0">

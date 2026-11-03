@@ -40,7 +40,7 @@ app.use((err, req, res, next) => {
 
     if (err.code === "LIMIT_FILE_SIZE") {
         statusCode = 413;
-        message: "Resume file must me under 3MB.";
+        message: "Resume file must be under 5MB.";
     }
 
     if (statusCode === 500 && process.env.NODE_ENV === "production") {

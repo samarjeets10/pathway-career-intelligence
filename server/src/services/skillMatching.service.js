@@ -107,7 +107,7 @@ function calculateMatchScore({
 };
 
 
-const MAX_SKILL_GAPS = 15;
+const MAX_SKILL_GAPS = 8;
 
 // skill gap analysing block :
 function analyzeSkillGap({
