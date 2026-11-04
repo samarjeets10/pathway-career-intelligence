@@ -1,88 +1,18 @@
-const Groq = require("groq-sdk");
 const { careerExtractionSchema } = require("../schemas/career-extraction.schema");
 const { careerExtractionPrompt } = require("../prompts/careerExtraction.prompt");
+const { generateStructured } = require("./structuredAI.service");
 
-
-const apiKey = process.env.GROQ_API_KEY;
-
-if (!apiKey) {
-    console.error("api key not loaded or found!!");
-}
-
-const groq = new Groq({
-    apiKey: apiKey
-});
-
-
-async function extractCareerInformation({
-    resume, 
-    selfDescription, 
-    jobDescription
-}) {
-
-    const prompt = careerExtractionPrompt({
-        resume, 
-        selfDescription, 
-        jobDescription
+async function extractCareerInformation({ resume, selfDescription, jobDescription }) {
+    const { data } = await generateStructured({
+        system: "You extract structured career information from provided text. Return the result as valid JSON.",
+        prompt: careerExtractionPrompt({ resume, selfDescription, jobDescription }),
+        zodSchema: careerExtractionSchema,
+        maxTokens: 2048,
+        purpose: "career-extraction",
+        retries: 1
     });
 
-    let completion;
-
-    try {
-
-        completion = await groq.chat.completions.create({
-            model: "openai/gpt-oss-20b",
-            reasoning_effort: "low",
-            max_completion_tokens: 2048,
-            messages: [
-                {
-                    role: "system",
-                    content: "You extract structured career information from provided text. Return the result as valid JSON."
-                },
-
-                {
-                    role: "user",
-                    content: prompt
-                },
-            ],
-
-            response_format: {
-                    type: "json_object"
-            },
-        });
-
-    } catch (error) {
-        throw error;
-    }
-
-    const rawContent =  completion.choices[0].message.content;
-
-    let parsedContent;
-
-    try {
-        parsedContent = JSON.parse(rawContent);
-    } catch (error) {
-        throw new Error("AI returned invalid JSON during career information extraction.");
-    };
-
-    const validationResult = careerExtractionSchema.safeParse(parsedContent);
-
-
-    if (!validationResult.success) {
-        console.error(
-            "Career extraction schema validation failed:",
-            validationResult.error
-        );
-
-        throw new Error(
-            "AI response did not match the expected career extraction structure."
-        );
-    }
-
-    return validationResult.data;
-    
+    return data;
 }
 
-module.exports = {
-    extractCareerInformation
-}
+module.exports = { extractCareerInformation };
