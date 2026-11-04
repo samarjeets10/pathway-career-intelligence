@@ -234,7 +234,7 @@ const interviewReportSchema = z
             skillGapsAddressed: z
               .array(z.string().min(2).max(100))
               .min(1)
-              .max(5)
+              .max(15)
               .describe(
                 "Identify the skill gaps from the skill-gap analysis that this day's preparation is intended to address."
               ),

@@ -299,6 +299,18 @@ function interviewReportPrompt({
         Tasks must be specific and actionable.
 
         ==================================================
+        OUTPUT SIZE LIMITS (STRICT)
+        ==================================================
+
+        - Exactly 5 technical questions.
+        - Exactly 3 behavioral questions.
+        - Exactly 7 preparation days.
+        - 2 to 3 tasks per preparation day.
+        - Every answer must be at most 80 words.
+        - Every reason and recommendation must be one or two short sentences.
+        - Keep every string as short as possible while staying specific.
+
+        ==================================================
 
         Generate the complete report.
 

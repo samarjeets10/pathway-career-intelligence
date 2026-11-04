@@ -2,6 +2,11 @@ const Groq = require('groq-sdk');
 const apiError = require('../utils/apiError');
 
 const MODEL = process.env.GROQ_MODEL || "openai/gpt-oss-20b";
+const TPM_LIMIT = Number(process.env.GROQ_TPM_LIMIT) || 8000;
+const SAFETY_MARGIN = 300;
+
+// ~3 chars per token is a deliberately conservative estimate.
+const estimateTokens = (text) => Math.ceil(String(text || "").length / 3);
 
 
 let client;
@@ -56,12 +61,20 @@ async function generateJson ({
     const startedAt = Date.now();
     let completion;
 
+    const allowedOutput = TPM_LIMIT - SAFETY_MARGIN - estimateTokens(system) - estimateTokens(prompt);
+
+    if (allowedOutput < 800) {
+        throw new apiError(413, "The input is too large for the current AI plan. Please shorten the resume or job description.");
+    }
+
+const effectiveMaxTokens = Math.min(maxTokens, allowedOutput);
+
     try {
         completion = await getClient().chat.completions.create({
             model: MODEL,
             temperature,
             reasoning_effort: reasoningEffort,
-            max_completion_tokens: maxTokens,
+            max_completion_tokens: effectiveMaxTokens,
             messages: [
                 { role: "system", content: system },
                 { role: "user", content: prompt }
@@ -71,8 +84,7 @@ async function generateJson ({
                 : { type: "json_object" }
         });
     } catch (error) {
-        console.error(`[groq.provider] ${purpose} failed: status=${error?.status} ${error?.message}`);
-        throw toApiError(error);
+        console.info(`[groq.provider] ${purpose} ${meta.durationMs}ms finish=${meta.finishReason} in=${meta.usage?.prompt_tokens} out=${meta.usage?.completion_tokens} cap=${effectiveMaxTokens}`);
     }
 
     const choice = completion.choices?.[0];

@@ -52,6 +52,11 @@ async function analyzeInterviewData({
 
     const finalReport = {
         ...aiReport,
+
+        preparationPlan: aiReport.preparationPlan.map((day) => ({
+            ...day,
+            skillGapsAddressed: day.skillGapsAddressed.slice(0, 6)
+        })),
         
         matchScore: skillAnalysis.matchScore,
         // skillGaps: aiReport.skillGap.map((gap) => ({
