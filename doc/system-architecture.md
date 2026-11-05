@@ -543,6 +543,29 @@ Groq(...)
 
 That separation will pay off later.
 
+## Current implementation (2026-11-04)
+
+```
+interview.service
+   ├── careerExtraction.service ─┐
+   └── ai.service ───────────────┤
+                                 ▼
+                     structuredAi.service   parse JSON → Zod validate → retry
+                                 ▼
+                       groq.provider        transport, timeout, error mapping, token guard
+                                 ▼
+                               Groq
+```
+
+| Layer | Responsibility |
+|---|---|
+| `groq.provider` | One function, `generateJson()`. Sends the request, maps provider errors to `apiError`, estimates input size and caps output tokens to fit `GROQ_TPM_LIMIT`. No business knowledge. |
+| `structuredAi.service` | `generateStructured()`. Parses JSON, validates with the feature's Zod schema, retries once on bad structure, returns `{ data, meta }`. Never retries 429 or timeouts. |
+| Feature services | Build the prompt, pass the Zod schema, post-process (e.g. clamp overflow). |
+
+Rules: no SDK import outside the provider; no resume or model text in logs (metadata only); AI output is untrusted until it passes Zod.
+
+
 # 10. AI + Deterministic Logic
 
 This is one of our core architectural principles.

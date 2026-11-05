@@ -44,11 +44,12 @@ Nothing to build here — just noting it's the baseline everything else sits on.
 
 ## Phase 2 — Resume Core
 
+> **Status (2026-11-04):** 🚧 In progress. Design locked: `Resume` + `ResumeVersion` models, deterministic parser (no AI call at upload), original PDFs not stored, analyses pin a `ResumeVersion`. 1A (models + parser) drafted; 1B (service, controller, routes, Zod validation) next.
+
 **Features:**
 - Upload a resume (PDF), with file-type and file-size validation
 - Extract text from the uploaded PDF
-- Parse extracted text into structured resume data (personal info, summary, education, experience, projects, skills, certifications, achievements, languages, publications)
-- Store a `Resume` (the container — title, owner, default flag) and `ResumeVersion` (a content snapshot — the parsed/edited data)
+- v1 is deterministic (section detection + alias-based skill detection); AI enrichment is optional later
 - CRUD: list resumes, get one, edit content, delete, mark default
 - Ownership checks: every read/write scoped to `req.user.id`
 
@@ -92,7 +93,27 @@ Nothing to build here — just noting it's the baseline everything else sits on.
 
 ---
 
+## Phase 4b — Deterministic ATS Analysis
+
+**Why before AI:** most ATS checks are rules, not language tasks. Pure functions, unit-testable, no token cost.
+
+**Features:**
+- Section presence (summary, experience, education, projects, skills)
+- Contact checks (email, phone, GitHub/LinkedIn links)
+- Length (word count / page estimate)
+- Bullet quality (starts with action verb, contains a metric, 8–25 words)
+- Keyword coverage against a job description (reuses `normalizeSkill`)
+- Extraction health (is the PDF text readable or garbled?)
+- Weighted score + per-check pass/warn/fail with a fix hint
+- Endpoint: `POST /api/resumes/:id/ats` (optional job description)
+
+**Exit criteria:** a resume version produces a reproducible ATS score and itemized checks with no AI call.
+
+---
+
 ## Phase 5 — AI Service Layer (Groq Integration)
+
+> **Status (2026-11-04):** ✅ provider boundary done. `providers/groq.provider.js` (transport, error mapping, token-budget guard) and `services/structuredAi.service.js` (parse → Zod validate → retry). Career extraction and interview report both use it. Remaining: resume analysis, ATS suggestions, AI metadata persistence (AI5), source-data validators (AI6).
 
 **Features:**
 - AI service abstraction: `Controller → Application Service → AI Service → Prompt Builder → Groq Provider → Structured Output → Validation → Application Logic`
@@ -160,7 +181,7 @@ By this point the backend has real functionality to expose. This phase is about 
 - API versioning if the surface area justifies it
 - Test coverage (unit + integration) — worth pulling in the testing-strategy approach once there's enough surface area to test meaningfully
 - Deployment: environment config, MongoDB Atlas, hosting
-- Documentation pass: fill in `doc/api-design.md`, `doc/database-design.md`, `doc/product-requirements.md`, `doc/system-architecture.md` (currently empty placeholders in the repo)
+- Documentation pass: keep `doc/api-design.md`, `doc/database-design.md`, `doc/product-requirements.md`, `doc/system-architecture.md` and `doc/decisions.md` in sync as features land; final review before deployment
 
 **Exit criteria:** the app is deployed, documented, and the security checklist from the project context doc is fully satisfied.
 

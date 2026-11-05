@@ -30,11 +30,20 @@ Current live responses are inconsistent: `{ message, user }`, `{ message, interv
 
 | Method | Path | Access | Body | Status |
 |---|---|---|---|---|
-| POST | `/` | Private | `multipart/form-data`: `resume` (PDF file), `selfDescription`, `jobDescription` | ✅ — returns `{ matchScore, skillGaps }` only; questions/plan not generated (see `system-architecture.md` §A) |
-| GET | `/` | Private | – | ⏳ list the user's own reports |
-| GET | `/:id` | Private, owner-checked | – | ⏳ |
+| POST | `/` | Private | `multipart/form-data`: `resume` (PDF file), `selfDescription`, `jobDescription` | ✅ returns the saved report (score, matched/missing skills, gaps, questions, plan) |
+| GET | `/` | Private | – | ✅ list the caller's own reports |
+| GET | `/:id` | Private, owner-checked | – | ✅ |
 
-Upload constraint: PDF only by extension expectation, 3 MB max (`multer` memory storage) — **no MIME/magic-byte validation yet** (FR-R1 gap).
+Upload constraint: PDF only (`%PDF` magic-byte check), 3 MB max (`multer` memory storage).
+
+**AI-related error responses** (all use the standard error envelope):
+
+| Status | Meaning |
+|---|---|
+| 413 | Input too large for the current AI plan's token limit — shorten resume or job description |
+| 429 | AI service busy / rate limit — retry later |
+| 502 | AI provider failure or invalid AI output (nothing was stored) |
+| 504 | AI request timed out |
 
 ## 4. Resumes — `/api/resumes` ⏳ Phase 2 (none of this exists yet)
 
