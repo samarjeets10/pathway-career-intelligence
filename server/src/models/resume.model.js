@@ -16,7 +16,7 @@ const resumeSchema = new mongoose.Schema(
         },
 
         isDefault: {
-            type: Bollean, 
+            type: Boolean, 
             default: false,
         },
 
