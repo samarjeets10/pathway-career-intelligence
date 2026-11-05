@@ -28,7 +28,7 @@ app.use(cors({
 // using all the routes here :
 app.use("/api/auth", authRouter);
 app.use("/api/interview", interviewRouter);
-app.use("/api/resume", resumeRouter);
+app.use("/api/resumes", resumeRouter);
 
 
 app.use((err, req, res, next) => {

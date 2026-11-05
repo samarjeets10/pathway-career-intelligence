@@ -60,6 +60,18 @@ const AMBIGUOUS_ALIASES = new Set(["go", "next", "spring", "rest", "ws", "rn", "
 
 const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
+// URLs and emails are contact info, not skill evidence (e.g. github.com/jane).
+const CONTACT_NOISE = /\b(?:https?:\/\/|www\.)\S+|\b[\w-]+\.(?:com|io|dev|org|net|in)\/\S*|\S+@\S+\.\S+/gi;
+
+// Acronyms that are safe anywhere when written in capitals ("REST APIs"), but not as the plain word "rest".
+const CAPS_ONLY_ALIASES = ["rest", "rag"];
+const CAPS_MATCHERS = CAPS_ONLY_ALIASES
+    .filter((alias) => ALIAS_TO_CANONICAL.has(alias))
+    .map((alias) => ({
+        canonical: ALIAS_TO_CANONICAL.get(alias),
+        regex: new RegExp(`(?<![A-Za-z0-9+#.])${alias.toUpperCase()}(?![A-Za-z0-9+#])`)
+    }));
+
 function buildMatchers(aliasFilter) {
     return [...ALIAS_TO_CANONICAL.entries()]
         .filter(([alias]) => aliasFilter(alias))
@@ -73,7 +85,7 @@ const SAFE_MATCHERS = buildMatchers((alias) => !AMBIGUOUS_ALIASES.has(alias));
 const ALL_MATCHERS = buildMatchers(() => true);
 
 function scan(text, matchers, found) {
-    const flat = text.replace(/\s+/g, " ");
+    const flat = text.replace(CONTACT_NOISE, " ").replace(/\s+/g, " ");
     for (const { canonical, regex } of matchers) {
         if (regex.test(flat)) found.add(canonical);
     }
@@ -82,6 +94,7 @@ function scan(text, matchers, found) {
 function detectSkills(fullText, skillsSectionText) {
     const found = new Set();
     scan(fullText, SAFE_MATCHERS, found);
+    scan(fullText, CAPS_MATCHERS, found);
     if (skillsSectionText) scan(skillsSectionText, ALL_MATCHERS, found);
     return [...found].sort();
 }
